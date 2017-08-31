@@ -1,6 +1,8 @@
-var path = require('path');
-var webpack = require('webpack');
-var ExtractTextPlugin = require("extract-text-webpack-plugin");
+const path = require('path');
+const webpack = require('webpack');
+// 将样式提取到单独的css文件中，而不是打包到js文件或使用style标签插入在head标签中
+const ExtractTextPlugin = require("extract-text-webpack-plugin");
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 function resolve(dir) {
   return path.join(__dirname, '..', dir);
@@ -14,7 +16,11 @@ module.exports = {
     filename: 'build.js'
   },
   plugins: [
-    new ExtractTextPlugin("style.css")
+    new ExtractTextPlugin("style.css"),
+    // new HtmlWebpackPlugin({
+    //  filename:'index.html',
+    //   title: 'Output Management'
+    // })
   ],
   module: {
     rules: [
@@ -37,10 +43,16 @@ module.exports = {
         loader: 'babel-loader',
         exclude: /node_modules/
       },
-      { test: /\.css$/,
+      {
+        test: /\.css$/,
         loader: "style-loader!css-loader"
       },
-      { test: /\.(eot|woff|woff2|ttf)$/,
+      {
+        test: /\.less$/,
+        loader: "less-loader"
+      },
+      {
+        test: /\.(eot|woff|woff2|ttf)$/,
         loader: "file-loader"
       },
       {
@@ -57,12 +69,18 @@ module.exports = {
     alias: {
       'vue': 'vue/dist/vue.js',
       'pages': resolve('src/pages'),
-      'base' : resolve('src/base')
+      'base': resolve('src/base')
     }
   },
   devServer: {
     historyApiFallback: true,
-    noInfo: true
+    noInfo: true,
+    proxy: {
+      "/lease": {
+        target: "http://lease.loverqi.cn:8080",
+        changeOrigin: true
+      },
+    }
   },
   performance: {
     hints: false

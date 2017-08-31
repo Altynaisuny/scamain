@@ -14,7 +14,12 @@
           </el-form-item>
           <el-form-item label="租借时间">
             <el-col :span="11">
-              <el-date-picker type="date" placeholder="选择日期" v-model="form.date1" style="width: 100%;"></el-date-picker>
+              <el-date-picker
+                type="datetime"
+                @change="dateChange"
+                placeholder="选择日期时间"
+                format="yyyy-MM-dd HH:mm:ss"
+                v-model="date1" style="width: 100%;"></el-date-picker>
             </el-col>
             <el-col class="line" :span="2">-</el-col>
             <el-col :span="11">
@@ -51,33 +56,40 @@
 <script>
   import ElRow from "element-ui/packages/row/src/row";
   import ElCol from "element-ui/packages/col/src/col";
-  export default{
-    data(){
-      return{
+
+
+  export default {
+    data() {
+      return {
         form: {
           name: '',
           region: '',
-          date1: '',
+
           date2: '',
           delivery: false,
           type: [],
           resource: '',
           desc: ''
-        }
+        },
+        date1: '',
       }
     },
-    methods:{
+    methods: {
       onSubmit() {
         this.$message({
-          message:"登记成功",
-          type:'success'
+          message: "登记成功",
+          type: 'success'
         });
       },
-      resetForm(forName){
+      resetForm(forName) {
         this.$refs[forName].resetFields();
+      },
+      dateChange(val) {
+
       }
     },
-    components:{
+    watch: {},
+    components: {
       ElCol, ElRow
     }
   }

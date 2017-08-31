@@ -12,6 +12,7 @@
           @blur="loseFocus('Event')"
           @focus="getFocus('Event')"
           class="app-rent-content-input"
+          @keyup.enter.native="doLogin"
           autofocus
         >
         </el-input>
@@ -145,6 +146,13 @@
       },
       getSystem(){
         this.$router.push("/workBeach");
+      },
+      deleteShop(){
+
+      },
+      doLogin(){
+        console.log(this.inputValue);
+        this.inputValue='';
       }
 
     },
@@ -155,8 +163,7 @@
 
     },
     watch: {
-      inputValue: function () {
-
+      inputValue: function (value) {
       }
     },
     components: {ElCol, ElRow}

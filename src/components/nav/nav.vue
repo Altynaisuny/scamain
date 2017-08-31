@@ -88,10 +88,11 @@
               cancelButtonText: '取消',
               type: 'warning'
             }).then(() => {
+              this.$http.post('/lease/woker/unlogin.action',{token:''})
               this.$router.push('/');
               this.$message({
                 type: 'success',
-                message: '退出成功!'
+                message: '退出登陆成功!'
               });
             }).catch(() => {
               this.$message({
