@@ -1,7 +1,6 @@
 import rent from '../pages/rent/rent.vue'
 import error from '../pages/error/404.vue'
 import login from '../pages/login/login.vue'
-import vip from '../pages/vip/vip.vue'
 import rentInfo from '../pages/rentInfo/rentInfo.vue'
 import register from '../pages/register/goodsRegister.vue'
 import blackList from '../pages/blackList/blackList.vue'
@@ -11,11 +10,23 @@ import charging from '../pages/charging/charging.vue'
 import level from '../pages/level/level.vue'
 import shopManage from '../pages/shopManage/shopManage.vue'
 import userManage from '../pages/userManage/userManage.vue'
-
+import category from '../pages/register/category.vue'
+import recharge from '../pages/transaction/recharge.vue'
+import cashFlow from '../pages/transaction/cashFlow.vue'
+import modifyPassword from '../pages/password/Modify.vue'
+import user from '../pages/user/user.vue'
 
 export default [
   {
     path:'/',
+    component:login
+  },
+  {
+    path:'/index.html',
+    component:login
+  },
+  {
+    path:'/index',
     component:login
   },
   {
@@ -43,10 +54,6 @@ export default [
         component:blackList
       },
       {
-        path:'vip',
-        component:vip
-      },
-      {
         path:'charging',
         component:charging
       },
@@ -61,6 +68,26 @@ export default [
       {
         path:'userManage',
         component:userManage
+      },
+      {
+        path:'category',
+        component:category
+      },
+      {
+        path:'recharge',
+        component:recharge
+      },
+      {
+        path:'cashFlow',
+        component:cashFlow
+      },
+      {
+        path:'modifyPassword',
+        component:modifyPassword
+      },
+      {
+        path:'user',
+        component:user
       }
     ]
   },

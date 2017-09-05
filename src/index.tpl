@@ -2,12 +2,10 @@
 <html lang="zh-CN">
   <head>
     <meta charset="utf-8">
-    <title>scamain</title>
-    <link rel="stylesheet" href="/style.css">
+    <title>租赁管理系统</title>
   </head>
   <body>
     <div id="app"></div>
-    <script src="/build.js"></script>
   </body>
 </html>
 <style>

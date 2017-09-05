@@ -1,11 +1,23 @@
 <template>
   <div id="app-shopManage">
+    <el-row>
+      <el-col :span="4" :offset="6">
+        <el-input v-model="inputshopId" placeholder="请输入店铺编号"></el-input>
+      </el-col>
+      <el-col :span="4">
+        <el-input v-model="inputname" placeholder="请输入店铺名称"></el-input>
+      </el-col>
+      <el-col :span="4">
+        <el-button type="primary" icon="search" @click="search">搜索</el-button>
+      </el-col>
+      <el-button type="primary" icon="plus" @click="dialogNewShop = true"></el-button>
+    </el-row>
     <el-table
       :data="tableData"
       stripe
       style="width: 100%">
       <el-table-column
-        prop="date"
+        prop="shopId"
         label="店铺编号"
         width="180">
       </el-table-column>
@@ -26,9 +38,9 @@
       <el-table-column
         label="操作">
         <template scope="scope">
-          <el-button type="primary" icon="edit" @click="dialogFormVisible = true"></el-button>
-          <el-button type="primary" icon="delete" @click="deleteShop"></el-button>
-          <el-button type="primary" icon="plus" @click="dialogNewShop = true"></el-button>
+          <el-button type="primary" icon="edit" @click="handleEdit(scope.$index, scope.row)"></el-button>
+          <el-button type="primary" icon="delete" @click="handleDelete(scope.$index, scope.row)"></el-button>
+
         </template>
       </el-table-column>
     </el-table>
@@ -36,7 +48,7 @@
     <el-dialog title="店铺信息修改" :visible.sync="dialogFormVisible">
       <el-form :model="formEdit">
         <el-form-item label="店铺编号" :label-width="formLabelWidth">
-          <el-input v-model="formEdit.id" auto-complete="off"></el-input>
+          <el-input v-model="formEdit.shopId" :disabled="true" auto-complete="off"></el-input>
         </el-form-item>
         <el-form-item label="店铺名称" :label-width="formLabelWidth">
           <el-input v-model="formEdit.name" auto-complete="off"></el-input>
@@ -58,13 +70,10 @@
       <el-card class="box-card">
         <div slot="header" class="clearfix">
           <span style="line-height: 36px;">新增店铺</span>
-          <el-button style="float: right;" type="primary">增加</el-button>
+          <el-button style="float: right;" type="primary" @click="add">增加</el-button>
         </div>
         <div class="text item">
           <el-form :model="formNew">
-            <el-form-item label="店铺编号" :label-width="formLabelWidth">
-              <el-input v-model="formNew.id" auto-complete="off"></el-input>
-            </el-form-item>
             <el-form-item label="店铺名称" :label-width="formLabelWidth">
               <el-input v-model="formNew.name" auto-complete="off"></el-input>
             </el-form-item>
@@ -90,63 +99,84 @@
       ElRow},
     data(){
       return{
-        tableData: [{
-          date: '001',
-          name: '店铺一',
-          address: '上海市普陀区金沙江路 1518 弄',
-          phone:'0123456789'
-        }, {
-          date: '002',
-          name: '店铺二',
-          address: '上海市普陀区金沙江路 1517 弄',
-          phone:'0123456789'
-        }, {
-          date: '003',
-          name: '店铺三',
-          address: '上海市普陀区金沙江路 1519 弄',
-          phone:'0123456789'
-        }, {
-          date: '004',
-          name: '店铺四',
-          address: '上海市普陀区金沙江路 1516 弄',
-          phone:'0123456789'
-        }],
+        tableData: [],
         dialogFormVisible: false,
         formEdit: {
+          shopId: '',
           name: '',
-          id:'',
-          phone:'',
-          address:''
+          address: '',
+          phone:''
         },
         formLabelWidth: '120px',
         formNew: {
           name: '',
-          id:'',
+          shopId:'',
           phone:'',
           address:''
         },
         //新增用户dialog
-        dialogNewShop:false
+        dialogNewShop:false,
+        inputshopId:'',
+        inputname:''
       }
     },
     methods:{
-      deleteShop(){
+      handleEdit(index, row){
+        this.dialogFormVisible = true
+        this.formEdit.shopId = row.shopId
+      },
+      handleDelete(index, row){
+        let shopId = row.shopId
         this.$confirm('删除店铺, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
           //此处发送请求
-          this.$message({
-            type: 'success',
-            message: '删除成功!'
-          });
+          this.$http.post('/lease/shop/delete.action',{
+            shopId:shopId
+          }).then((response)=>{
+            let body = response.data
+            if (body.code === 0 ){
+              this.$message({
+                type: 'success',
+                message: body.message
+              });
+            } else {
+              this.$message({
+                type: 'error',
+                message: body.message
+              });
+            }
+          },(error)=>{});
+
         }).catch(() => {
           this.$message({
             type: 'info',
             message: '已取消操作'
           });
         });
+      },
+      add(){
+        this.$http.post('/lease/category/update.action',{
+          name: this.formNew.name,
+          phone:this.formNew.phone,
+          address:this.formNew.address
+        }).then((response)=>{
+          let body = response.data
+          if (body.code === 0 ){
+            this.$message({
+              type: 'success',
+              message: body.message
+            });
+          } else {
+            this.$message({
+              type: 'error',
+              message: body.message
+            });
+          }
+        },(error)=>{});
+
       },
       //取消修改
       cancelEdit(){
@@ -164,11 +194,27 @@
           type: 'warning'
         }).then(() => {
           this.dialogFormVisible = false;
-          //此处发送请求
-          this.$message({
-            type: 'success',
-            message: '修改成功!'
-          });
+
+          this.$http.post('/lease/shop/update.action',{
+            shopId:this.formEdit.shopId,
+            name:this.formEdit.name,
+            address:this.formEdit.address,
+            phone: this.formEdit.phone
+          }).then((response)=>{
+            let body = response.data
+            if (body.code === 0 ){
+              this.$message({
+                type: 'success',
+                message: body.message+"店铺ID"+body.data.shopId
+              });
+            } else {
+              this.$message({
+                type: 'error',
+                message: body.message
+              });
+            }
+          },(error)=>{});
+
         }).catch(() => {
           this.dialogFormVisible = false;
           this.$message({
@@ -177,7 +223,32 @@
           });
         });
 
+      },
+
+      search(){
+        this.$http.post('/lease/shop/find.action',{
+          shopId:this.inputshopId,
+          name:this.inputname
+        }).then((response)=>{
+          let body = response.data
+          if (body.code === 0 ){
+            this.tableData = body.data
+            this.$message({
+              type: 'success',
+              message: body.message
+            });
+          } else {
+            this.$message({
+              type: 'error',
+              message: body.message
+            });
+          }
+        },(error)=>{});
+
       }
+    },
+    mounted(){
+      this.search()
     }
   }
 </script>

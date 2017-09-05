@@ -1,5 +1,5 @@
 <template>
-  <div id="app-info">
+  <div id="app-cashFlow">
     <el-row class="app-info-search">
       <el-col :span="3">
         <el-select v-model="state" filterable placeholder="请选择订单状态">
@@ -50,48 +50,36 @@
           label="订单号">
         </el-table-column>
         <el-table-column
-          prop="goodsName"
-          label="商品名称">
-        </el-table-column>
-        <el-table-column
           prop="state"
-          label="订单状态">
+          label="类别">
         </el-table-column>
         <el-table-column
           prop="cardId"
-          label="用户IC">
+          label="IC卡号码">
         </el-table-column>
         <el-table-column
           prop="name"
           label="昵称">
         </el-table-column>
         <el-table-column
-          prop="startTime"
+          prop="time"
           label="租赁时间">
         </el-table-column>
         <el-table-column
-          prop="endTime"
-          label="结束租赁时间">
-        </el-table-column>
-        <el-table-column
-          prop="consuming"
-          label="租赁的总耗时">
-        </el-table-column>
-        <el-table-column
           prop="cost"
-          label="租赁的总费用">
+          label="总费用">
         </el-table-column>
         <el-table-column
-          prop="borrowId"
-          label="租借的店铺">
+          prop="shopName"
+          label="收款店铺">
         </el-table-column>
         <el-table-column
-          prop="alsoId"
-          label="结束租赁的店铺">
+          prop="goodsName"
+          label="	租赁商品">
         </el-table-column>
         <el-table-column
           prop="remark"
-          label="订单备注">
+          label="备注">
         </el-table-column>
       </el-table>
     </el-row>
@@ -144,7 +132,7 @@
     methods: {
 
       search(){
-        this.$http.post('/lease/flowing/leasegoods.action',{
+        this.$http.post('/lease/flowing/findFlowing.action',{
           page:this.pagination.page,
           pageSize:this.pagination.pageSize,
           state:this.state,

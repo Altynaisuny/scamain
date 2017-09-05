@@ -1,8 +1,9 @@
 const path = require('path');
 const webpack = require('webpack');
-// 将样式提取到单独的css文件中，而不是打包到js文件或使用style标签插入在head标签中
+
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CleanWebpackPlugin = require('clean-webpack-plugin');
 
 function resolve(dir) {
   return path.join(__dirname, '..', dir);
@@ -11,31 +12,47 @@ function resolve(dir) {
 module.exports = {
   entry: './src/main.js',//入口文件路径
   output: {
+    publicPath: "/",
     path: path.resolve(__dirname, './dist'),//存放打包后文件的路径
-    publicPath: '/dist/',
     filename: 'build.js'
   },
   plugins: [
-    new ExtractTextPlugin("style.css"),
-    // new HtmlWebpackPlugin({
-    //  filename:'index.html',
-    //   title: 'Output Management'
-    // })
+    new CleanWebpackPlugin(['./dist']),
+    new ExtractTextPlugin({
+      filename: "style.css"
+    }),
+    new HtmlWebpackPlugin({
+      hash: true,
+      template: './src/index.tpl',
+      filename: "index.html"
+    }),
+
   ],
+  resolve: {
+    //常用位置别名
+    alias: {
+      'vue': 'vue/dist/vue.js',
+      'pages': resolve('src/pages'),
+      'base': resolve('src/base')
+    }
+  },
   module: {
     rules: [
       {
         test: /\.vue$/,
-        loader: 'vue-loader',
-        options: {
-          // other vue-loader options go here
-          css: ExtractTextPlugin.extract({
-            use: 'css-loader',
-            fallback: 'vue-style-loader'
-          }),
-          less: ExtractTextPlugin.extract({
-            use: 'css-loader!less-loader',
-          })
+        use: {
+          loader: 'vue-loader',
+          options: {
+            loaders: {
+              css: ExtractTextPlugin.extract({
+                use: 'css-loader',
+                fallback: 'vue-style-loader'
+              }),
+              less: ExtractTextPlugin.extract({
+                use: 'css-loader!less-loader',
+              })
+            }
+          }
         }
       },
       {
@@ -45,39 +62,37 @@ module.exports = {
       },
       {
         test: /\.css$/,
-        loader: "style-loader!css-loader"
+        use: [
+          'style-loader',
+          'css-loader'
+        ]
       },
       {
         test: /\.less$/,
-        loader: "less-loader"
+        use: [
+          'less-loader'
+        ]
       },
       {
         test: /\.(eot|woff|woff2|ttf)$/,
-        loader: "file-loader"
+        use: {
+          loader: 'file-loader',
+        }
       },
       {
         test: /\.(png|jpg|gif|svg)$/,
-        loader: 'file-loader',
-        options: {
-          name: '[name].[ext]?[hash]'
+        use: {
+          loader: 'file-loader',
         }
       }
     ]
-  },
-  resolve: {
-    //常用位置别名
-    alias: {
-      'vue': 'vue/dist/vue.js',
-      'pages': resolve('src/pages'),
-      'base': resolve('src/base')
-    }
   },
   devServer: {
     historyApiFallback: true,
     noInfo: true,
     proxy: {
       "/lease": {
-        target: "http://lease.loverqi.cn:8080",
+        target: "http://localhost:8081",
         changeOrigin: true
       },
     }
@@ -85,7 +100,7 @@ module.exports = {
   performance: {
     hints: false
   },
-  devtool: '#eval-source-map'
+  devtool: '#eval-source-map',
 }
 
 if (process.env.NODE_ENV === 'production') {
@@ -108,3 +123,4 @@ if (process.env.NODE_ENV === 'production') {
     })
   ])
 }
+

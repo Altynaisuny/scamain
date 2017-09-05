@@ -3,47 +3,26 @@
     <el-row>
       <el-col :span="6" :offset="9">
         <el-form ref="form" :model="form" label-width="80px">
-          <el-form-item label="物品名称">
-            <el-input v-model="form.name"></el-input>
+          <el-form-item label="名称" :rules="[{ required: true, message: '不能为空'}]">
+            <el-input v-model="form.goodsName"></el-input>
           </el-form-item>
-          <el-form-item label="物品种类">
-            <el-select v-model="form.region" placeholder="请选择物品种类">
+          <el-form-item label="商品类别" :rules="[{ required: true, message: '不能为空'}]">
+            <el-select v-model="form.categoryId" placeholder="请选择物品种类">
               <el-option label="种类一" value="shanghai"></el-option>
               <el-option label="种类二" value="beijing"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="租借时间">
-            <el-col :span="11">
-              <el-date-picker
-                type="datetime"
-                @change="dateChange"
-                placeholder="选择日期时间"
-                format="yyyy-MM-dd HH:mm:ss"
-                v-model="date1" style="width: 100%;"></el-date-picker>
-            </el-col>
-            <el-col class="line" :span="2">-</el-col>
-            <el-col :span="11">
-              <el-date-picker type="date" placeholder="选择日期" v-model="form.date2" style="width: 100%;"></el-date-picker>
-            </el-col>
+          <el-form-item label="条码" :rules="[{ required: true, message: '不能为空'}]">
+            <el-input v-model="form.bar"></el-input>
           </el-form-item>
-          <el-form-item label="租赁码">
-            <el-input></el-input>
+          <el-form-item label="描述">
+            <el-input v-model="form.describe"></el-input>
           </el-form-item>
-          <el-form-item label="归还码">
-            <el-input></el-input>
-          </el-form-item>
-          <el-form-item label="价格">
-            <el-input></el-input>
-          </el-form-item>
-          <el-form-item label="物品来源">
-            <el-radio-group v-model="form.resource">
-              <el-radio label="线上品牌商赞助"></el-radio>
-              <el-radio label="线下场地免费"></el-radio>
-            </el-radio-group>
-          </el-form-item>
+
           <el-form-item label="备注">
-            <el-input type="textarea" v-model="form.desc"></el-input>
+            <el-input v-model="form.remark"></el-input>
           </el-form-item>
+
           <el-form-item>
             <el-button type="primary" @click="onSubmit">立即创建</el-button>
             <el-button @click="resetForm('form')">重置</el-button>
@@ -62,20 +41,37 @@
     data() {
       return {
         form: {
-          name: '',
-          region: '',
-
-          date2: '',
-          delivery: false,
-          type: [],
-          resource: '',
-          desc: ''
+          categoryId:'',
+          goodsName:'',
+          describe:'',
+          remark:'',
+          bar:''
         },
-        date1: '',
       }
     },
     methods: {
       onSubmit() {
+        this.$http.post('/lease/goods/update.action',{
+          categoryId:this.form.categoryId,
+          goodsName:this.form.goodsName,
+          describe:this.form.describe,
+          remark:this.form.remark,
+          bar:this.form.bar
+        }).then((response)=>{
+          let body = response.data
+          if (body.code === 0 ){
+            this.$message({
+              type: 'success',
+              message: body.message+"ID:"+body.data.goodsId
+            });
+          } else {
+            this.$message({
+              type: 'error',
+              message: body.message
+            });
+          }
+        },(error)=>{});
+
         this.$message({
           message: "登记成功",
           type: 'success'
@@ -83,14 +79,14 @@
       },
       resetForm(forName) {
         this.$refs[forName].resetFields();
-      },
-      dateChange(val) {
-
       }
     },
     watch: {},
     components: {
       ElCol, ElRow
+    },
+    mounted(){
+      //todo 缺少产品列表下拉框初始化
     }
   }
 </script>

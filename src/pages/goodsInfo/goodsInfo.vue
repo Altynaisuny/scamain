@@ -2,17 +2,20 @@
   <div id="app-goodsInfo">
 
     <el-row class="app-goodsInfo-search-input">
-      <el-col :span="8" :offset="6">
-        <el-input placeholder="请输入内容" v-model="input5" autofocus>
-          <el-select v-model="select" slot="prepend" placeholder="请选择类别" style="width: 118px;">
-            <el-option label="序号" value="1"></el-option>
-            <el-option label="姓名" value="2"></el-option>
-            <el-option label="电话" value="3"></el-option>
-          </el-select>
-        </el-input>
+      <el-col :span="4" :offset="2">
+        <el-input v-model="inputCategoryName" placeholder="请输入产品类别名称" autofocus></el-input>&nbsp;
       </el-col>
       <el-col :span="4">
-        <el-button type="primary" icon="search">搜索</el-button>
+        <el-input v-model="inputCategoryId" placeholder="请输入产品类别id"></el-input>
+      </el-col>
+      <el-col :span="4">
+        <el-input v-model="inputGoodsId" placeholder="请输入产品id"></el-input>
+      </el-col>
+      <el-col :span="4">
+        <el-input v-model="inputGoodsName" placeholder="请输入产品名称"></el-input>
+      </el-col>
+      <el-col :span="4">
+        <el-button type="primary" icon="search" @click="search">搜索</el-button>
         <el-button>重置查询条件</el-button>
       </el-col>
     </el-row>
@@ -25,57 +28,37 @@
           class="app-vip-tableList"
         >
           <el-table-column
-            prop="id"
-            label="编号"
-            width="150">
+            prop="categoryName"
+            label="商品类别"
+            >
           </el-table-column>
           <el-table-column
-            prop="name"
-            label="名称"
-            width="120">
+            prop="goodsId"
+            label="产品id"
+            >
           </el-table-column>
           <el-table-column
-            prop="type"
-            label="种类"
-            width="120">
+            prop="goodsName"
+            label="产品名称"
+            >
           </el-table-column>
           <el-table-column
-            prop="time"
-            label="租借时间"
-            width="120">
+            prop="describe"
+            label="产品描述"
+            >
           </el-table-column>
           <el-table-column
-            prop="rentCode"
-            label="租赁码"
-            width="220">
-          </el-table-column>
-          <el-table-column
-            prop="returnCode"
-            label="归还码"
-            width="220">
-          </el-table-column>
-          <el-table-column
-            prop="price"
-            label="价格"
-            width="120">
-          </el-table-column>
-          <el-table-column
-            prop="origin"
-            label="来源"
-            width="120">
-          </el-table-column>
-          <el-table-column
-            prop="remarks"
+            prop="remark"
             label="备注"
-            width="120">
+            >
           </el-table-column>
           <el-table-column
             fixed="right"
             label="操作"
-            width="160">
+           >
             <template scope="scope">
-              <el-button @click="dialogFormVisible = true" type="text" size="small">编辑</el-button>
-              <el-button @click="deleteSelected" type="text" size="small">删除</el-button>
+              <el-button @click="handleEdit(scope.$index, scope.row)" type="text" size="small">编辑</el-button>
+              <el-button @click="handleDelete(scope.$index, scope.row)" type="text" size="small">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -86,7 +69,10 @@
       <el-col :span="4" :offset="16">
         <el-pagination
           layout="prev, pager, next"
-          :total="500">
+          :page-count="pagination.pageCount"
+          :page-size="pagination.pageSize"
+          :current-page="pagination.currentPage"
+        >
         </el-pagination>
       </el-col>
     </el-row>
@@ -94,32 +80,21 @@
     <el-dialog title="信息修改" :visible.sync="dialogFormVisible">
 
       <el-form :model="form" :label-position="labelPosition">
+        <el-form-item label="商品ID" :label-width="EditFormLabelWidth">
+          <el-input v-model="form.goodsId" :disabled="true" auto-complete="off"></el-input>
+        </el-form-item>
         <el-form-item label="名称" :label-width="EditFormLabelWidth">
-          <el-input v-model="form.name" auto-complete="off"></el-input>
+          <el-input v-model="form.goodsName" auto-complete="off"></el-input>
         </el-form-item>
-        <el-form-item label="类别" :label-width="EditFormLabelWidth">
-          <el-select v-model="form.region" placeholder="请选择">
-            <el-option label="类别一" value="shanghai"></el-option>
-            <el-option label="类别二" value="beijing"></el-option>
-          </el-select>
+        <el-form-item label="商品类别" :label-width="EditFormLabelWidth">
+          <el-input v-model="form.categoryId" auto-complete="off"></el-input>
         </el-form-item>
-        <el-form-item label="租借时间" :label-width="EditFormLabelWidth">
-          <el-input v-model="form.name" auto-complete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="租赁码" :label-width="EditFormLabelWidth">
-          <el-input v-model="form.name" auto-complete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="归还码" :label-width="EditFormLabelWidth">
-          <el-input v-model="form.name" auto-complete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="价格" :label-width="EditFormLabelWidth">
-          <el-input v-model="form.name" auto-complete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="来源" :label-width="EditFormLabelWidth">
-          <el-input v-model="form.name" auto-complete="off"></el-input>
+        <el-form-item label="描述" :label-width="EditFormLabelWidth">
+          <el-input v-model="form.describe" auto-complete="off"></el-input>
         </el-form-item>
         <el-form-item label="备注" :label-width="EditFormLabelWidth">
-          <el-input v-model="form.name" auto-complete="off"></el-input>
+          <el-input v-model="form.remark" auto-complete="off"></el-input>
+        </el-form-item>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -140,98 +115,97 @@
       ElRow},
     data(){
      return{
-       input5:'',
-       //查询类型
-       select: '',
+       //模糊查询产品名称
+       inputGoodsName:'',
+       //产品类别名称，该字段为模糊查询
+       inputCategoryName: '',
+       //	产品类别id
+       inputCategoryId:'',
+       //	产品id
+       inputGoodsId:'',
        //表数据
-       tableData: [{
-         id: '00001',
-         name: '物品名称',
-         type: '类别',
-         time: '一天',
-         rentCode: '5641675161',
-         returnCode: '164157981781',
-         price: '1500元',
-         origin:'购买',
-         remarks:'备注'
-       },
-         {
-           id: '00002',
-           name: '物品名称',
-           type: '类别',
-           time: '一天',
-           rentCode: '5641675161',
-           returnCode: '164157981781',
-           price: '1500元',
-           origin:'购买',
-           remarks:'备注'
-         },{
-           id: '00003',
-           name: '物品名称',
-           type: '类别',
-           time: '一天',
-           rentCode: '5641675161',
-           returnCode: '164157981781',
-           price: '1500元',
-           origin:'购买',
-           remarks:'备注'
-         },{
-           id: '00004',
-           name: '物品名称',
-           type: '类别',
-           time: '一天',
-           rentCode: '5641675161',
-           returnCode: '164157981781',
-           price: '1500元',
-           origin:'购买',
-           remarks:'备注'
-         },{
-           id: '00005',
-           name: '物品名称',
-           type: '类别',
-           time: '一天',
-           rentCode: '5641675161',
-           returnCode: '164157981781',
-           price: '1500元',
-           origin:'购买',
-           remarks:'备注'
-         }],
+       tableData: [],
        //编辑
        dialogFormVisible: false,
        form: {
-         name: '',
-         region: '',
-         date1: '',
-         date2: '',
-         delivery: false,
-         type: [],
-         resource: '',
-         desc: ''
+         goodsId:'',
+         categoryId:'',
+         goodsName:'',
+         describe:'',
+         remark:''
        },
        //搜索框宽度
        formLabelWidth: '120px',
        EditFormLabelWidth:'120px',
-       labelPosition:'left'
+       labelPosition:'left',
+       //分页配置
+       pagination:{
+         pageCount:100,
+         pageSize:10,//页面显示条数
+         currentPage:1//查询页码
+       },
      }
     },
     methods:{
-      deleteSelected(){
-        this.$confirm('删除店铺, 是否继续?', '提示', {
+      //编辑
+      handleEdit(index, row){
+        this.form.goodsId = row.goodsId
+        this.dialogFormVisible = true
+      },
+      //删除
+      handleDelete(index, row){
+        let goodsId = row.goodsId
+        this.$confirm('删除产品, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
           //此处发送请求
-          this.$message({
-            type: 'success',
-            message: '删除成功!'
-          });
+          this.$http.post('/lease/goods/delete.action',{
+            goodsId:goodsId
+          }).then((response)=>{
+            let body = response.data
+            if (body.code === 0 ){
+              this.$message({
+                type: 'success',
+                message: body.message
+              });
+            } else {
+              this.$message({
+                type: 'error',
+                message: body.message
+              });
+            }
+          },(error)=>{});
         }).catch(() => {
           this.$message({
             type: 'info',
             message: '已取消操作'
           });
         });
+      },
+      search(){
+        this.$http.post('/lease/goods/find.action',{
+          page:this.pagination.currentPage,
+          pageSize:this.pagination.pageSize,
+          categoryName:this.inputCategoryName,
+          categoryId:this.categoryId,
+          goodsId:this.goodsId,
+          goodsName:this.goodsName
+        }).then((response)=>{
+          let body = response.data
+          if (body.code === 0 ){
+            this.$message({
+              type: 'success',
+              message: body.message
+            });
+          } else {
+            this.$message({
+              type: 'error',
+              message: body.message
+            });
+          }
+        },(error)=>{});
       },
       //取消修改
       cancelEdit(){
@@ -250,10 +224,26 @@
         }).then(() => {
           this.dialogFormVisible = false;
           //此处发送请求
-          this.$message({
-            type: 'success',
-            message: '修改成功!'
-          });
+          this.$http.post('/lease/goods/update.action',{
+            categoryId:this.form.categoryId,
+            goodsId:this.form.goodsId,
+            goodsName:this.form.goodsName,
+            describe:this.form.describe,
+            remark:this.form.remark
+          }).then((response)=>{
+            let body = response.data
+            if (body.code === 0 ){
+              this.$message({
+                type: 'success',
+                message: body.message
+              });
+            } else {
+              this.$message({
+                type: 'error',
+                message: body.message
+              });
+            }
+          },(error)=>{});
         }).catch(() => {
           this.dialogFormVisible = false;
           this.$message({
@@ -263,6 +253,9 @@
         });
 
       }
+    },
+    mounted(){
+      this.search();
     }
   }
 </script>

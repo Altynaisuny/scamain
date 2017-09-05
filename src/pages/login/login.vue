@@ -82,24 +82,31 @@
         let status = false ;
         //校验成功
         if (validStatus) {
-          let that = this ;
           this.$http.post('/lease/woker/login.action', {
             username: this.userInfo.user,
             password: this.userInfo.pass
           }).then( (response)=> {
-            if (response.data.code === 0) {
-              this.$store.state.token=response.data.token
-              that.$message({
+            let body = response.data;
+            if (body.code === 0) {
+              this.$store.dispatch('setToken',body.token);
+
+              this.$store.dispatch('setSystem',body.data.isSystem)
+
+              this.$store.dispatch('setShopId', body.data.shopId)
+
+              this.$message({
                 message: '恭喜你，登录成功',
                 type: 'success'
               });
               //进入租赁界面
-              that.$router.push("/rent");
+              this.$router.push("/rent");
               return true
             } else {
-              that.$message.error("账户/密码错误，请重新输入");
+              this.$message.error(body.message);
               return false;
             }
+          },(error) => {
+            console.log(error)
           })
         } else {
           //校验失败

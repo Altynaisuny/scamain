@@ -15,14 +15,13 @@
   export default{
     data(){
       return{
-
       }
     },
     components:{
       scamainNav
     },
-    methods:{
-
+    methods:{},
+    mounted(){
     }
   }
 </script>
