@@ -14,7 +14,7 @@ Vue.config.devtools = true;
 const instance = axios.create({
   timeout:'5000',
   headers:{'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8'},
-  baseURL: 'http://localhost:8081',
+  // baseURL: 'http://lease.loverqi.cn:8080',
 });
 
 //POST传参序列化(添加请求拦截器)

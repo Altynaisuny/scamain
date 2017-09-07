@@ -92,7 +92,7 @@ module.exports = {
     noInfo: true,
     proxy: {
       "/lease": {
-        target: "http://localhost:8081",
+        target: "http://lease.loverqi.cn:8080/lease",
         changeOrigin: true
       },
     }

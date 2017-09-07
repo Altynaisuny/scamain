@@ -90,9 +90,9 @@
             if (body.code === 0) {
               this.$store.dispatch('setToken',body.token);
 
-              this.$store.dispatch('setSystem',body.data.isSystem)
+              this.$store.dispatch('setSystem',body.data.isSystem);
 
-              this.$store.dispatch('setShopId', body.data.shopId)
+              this.$store.dispatch('setShopId', body.data.shopId);
 
               this.$message({
                 message: '恭喜你，登录成功',

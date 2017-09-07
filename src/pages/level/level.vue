@@ -2,7 +2,7 @@
   <div id="app-level">
     <el-row>
       <el-col :span="4" :offset="8">
-        <el-input v-model="input" placeholder="请输入会员ID"></el-input>
+        <el-input v-model="id" placeholder="请输入会员ID"></el-input>
       </el-col>
       <el-col :span="2" :offset="1">
         <el-button type="primary" icon="search" @click="search">搜索</el-button>
@@ -20,15 +20,19 @@
         style="width: 100%">
         <el-table-column
           prop="gradeId"
-          label="优惠id">
+          label="会员编号">
+        </el-table-column>
+        <el-table-column
+          prop="gradeName"
+          label="优惠名称">
         </el-table-column>
         <el-table-column
           prop="discounts"
-          label="优惠的额度">
+          label="优惠额度">
         </el-table-column>
         <el-table-column
           prop="consumption"
-          label="	达到此优惠需要满足的消费">
+          label="最低消费(元)">
         </el-table-column>
         </el-table-column>
         <el-table-column
@@ -42,16 +46,16 @@
     </el-row>
     <el-dialog title="等级信息修改" :visible.sync="dialogFormVisible">
       <el-form :model="formEdit">
-        <el-form-item label="优惠id" :label-width="formLabelWidth" :rules="[{ required: true, message: '不能为空'}]">
+        <el-form-item label="会员编号" :label-width="formLabelWidth" :rules="[{ required: true, message: '不能为空'}]">
           <el-input v-model="formEdit.gradeId" auto-complete="off" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="优惠名称" :label-width="formLabelWidth" :rules="[{ required: true, message: '不能为空'}]">
           <el-input v-model="formEdit.gradeName" auto-complete="off"></el-input>
         </el-form-item>
-        <el-form-item label="享受的优惠" :label-width="formLabelWidth">
+        <el-form-item label="优惠折扣" :label-width="formLabelWidth">
           <el-input v-model="formEdit.discounts" auto-complete="off"></el-input>
         </el-form-item>
-        <el-form-item label="需要达到的消费" :label-width="formLabelWidth">
+        <el-form-item label="最低消费(元)" :label-width="formLabelWidth">
           <el-input v-model="formEdit.consumption" auto-complete="off"></el-input>
         </el-form-item>
       </el-form>
@@ -69,16 +73,16 @@
         </div>
         <div class="text item">
           <el-form :model="formNew">
-            <el-form-item label="优惠id" :label-width="formLabelWidth">
+            <el-form-item label="会员编号" :label-width="formLabelWidth">
               <el-input v-model="formNew.gradeId" auto-complete="off"></el-input>
             </el-form-item>
-            <el-form-item label="优惠名称" :label-width="formLabelWidth" :rules="[{ required: true, message: '不能为空'}]">
+            <el-form-item label="优惠名称" :label-width="formLabelWidth">
               <el-input v-model="formNew.gradeName" auto-complete="off"></el-input>
             </el-form-item>
-            <el-form-item label="享受的优惠" :label-width="formLabelWidth" :rules="[{ required: true, message: '不能为空'}]">
+            <el-form-item label="优惠折扣" :label-width="formLabelWidth" :rules="[{ required: true, message: '不能为空'}]">
               <el-input v-model="formNew.discounts" auto-complete="off"></el-input>
             </el-form-item>
-            <el-form-item label="需要达到的消费" :label-width="formLabelWidth" :rules="[{ required: true, message: '不能为空'}]">
+            <el-form-item label="最低消费" :label-width="formLabelWidth" :rules="[{ required: true, message: '不能为空'}]">
               <el-input v-model="formNew.consumption" auto-complete="off"></el-input>
             </el-form-item>
             </el-form-item>
@@ -94,20 +98,7 @@
   export default {
     data(){
       return{
-        tableData: [
-          {
-            "gradeId":1,
-            "gradeName":"初级会员",
-            "discounts":0.5,
-            "consumption":3652
-          },
-          {
-            "gradeId":2,
-            "gradeName":"高级会员",
-            "discounts":0.8,
-            "consumption":3652
-          }
-        ],
+        tableData: [],
         //会员ID
         id:'',
         dialogFormVisible: false,
@@ -136,10 +127,6 @@
           let body = response.data
           if (body.code === 0 ){
             this.tableData = body.data;
-            this.$message({
-              type: 'success',
-              message: body.message
-            });
           } else {
             this.$message({
               type: 'error',
@@ -162,12 +149,13 @@
             discounts:this.formEdit.discounts,
             consumption:this.formEdit.consumption
           }).then((response)=>{
-            let body = response.data
+            let body = response.data;
             if (body.code === 0 ){
               this.$message({
                 type: 'success',
                 message: body.message+"id"+body.data.gradeId
               });
+              this.search();
             } else {
               this.$message({
                 type: 'error',
@@ -198,6 +186,7 @@
                 type: 'success',
                 message: body.message
               });
+              this.search();
             } else {
               this.$message({
                 type: 'error',
@@ -247,12 +236,13 @@
             discounts:this.formEdit.discounts,
             consumption:this.formEdit.consumption
           }).then((response)=>{
-            let body = response.data
+            let body = response.data;
             if (body.code === 0 ){
               this.$message({
                 type: 'success',
                 message: body.message
               });
+              this.search();
             } else {
               this.$message({
                 type: 'error',
@@ -260,10 +250,6 @@
               });
             }
           },(error)=>{});
-          this.$message({
-            type: 'success',
-            message: '修改成功!'
-          });
         }).catch(() => {
           this.dialogFormVisible = false;
           this.$message({
@@ -275,7 +261,7 @@
       }
     },
     components: {ElCol, ElRow},
-    computed(){
+    mounted(){
       this.search();
     }
   }

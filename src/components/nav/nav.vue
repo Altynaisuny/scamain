@@ -27,9 +27,9 @@
         <el-menu-item index="5-3" @click="navClick('toggleUser')">切换用户</el-menu-item>
         <el-menu-item index="5-4" @click="navClick('modifyPassword')">修改密码</el-menu-item>
         <el-menu-item index="5-5" @click="navClick('blackList')">黑名单</el-menu-item>
-        <el-menu-item index="5-6" @click="navClick('logOut')">退出登录</el-menu-item>
+        <el-menu-item index="5-6" @click="navClick('loginAgain')">重新登录</el-menu-item>
+        <el-menu-item index="5-7" @click="navClick('logOut')">退出登录</el-menu-item>
       </el-submenu>
-
     </el-menu>
   </div>
 </template>
@@ -83,6 +83,9 @@
           case "shopManage":
             this.$router.push("/workBeach/shopManage");
             break;
+          case "loginAgain":
+            this.$router.push("/index");
+            break;
           case "modifyPassword":
             this.$router.push("/workBeach/modifyPassword");
             break;
@@ -110,16 +113,14 @@
               cancelButtonText: '取消',
               type: 'warning'
             }).then(() => {
-              this.$http.post('/lease/category/update.action',{
-                categoryId:sessionStorage.getItem('token')
-              }).then((response)=>{
+              this.$http.post('/lease/woker/unlogin.action',{}).then((response)=>{
                 let body = response.data
                 if (body.code === 0 ){
                   this.$message({
                     type: 'success',
                     message: body.message
                   });
-                  this.$router.push('/');//跳转至登录
+                  this.$router.push('/index');//跳转至登录
                   sessionStorage.removeItem('token')//移除token
                 } else {
                   this.$message({

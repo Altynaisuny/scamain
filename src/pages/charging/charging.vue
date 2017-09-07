@@ -6,7 +6,7 @@
         <i class="el-icon-information"></i>
         请选择店铺ID
       </el-col>
-      <el-col :span="4" v-if="isSystem">
+      <el-col :span="4" v-if="isSystem = true ? true :false">
         <el-select v-model="shopId" filterable>
           <el-option
             v-for="item in options"
@@ -18,7 +18,7 @@
           </el-option>
         </el-select>
       </el-col>
-      <el-col :span="4" v-else>
+      <el-col :span="4" v-if="isSystem = true ? false : true">
         <el-input
           v-model="shopId"
           :disabled="true"
@@ -117,16 +117,7 @@
     data() {
       return {
         options: [],
-        tableData: [
-          {
-            "priceId": 1,
-            "price": 60,
-          },
-          {
-            "priceId": 1,
-            "price": 80,
-          }
-        ],
+        tableData: [],
         formNew: {
           goodsId:'',
           shopId:'',
@@ -142,7 +133,7 @@
         dialogNewShop: false,
         //店铺ID
         shopId: '',
-        isSystem: null,
+        isSystem: false,
         formLabelWidth: '120px',
         dialogFormVisible: false,
       }
@@ -240,10 +231,15 @@
           }
         }, (error) => {
         });
-        this.isSystem = true
+        let that = this;
+        that.isSystem = true
       } else {
         this.shopId = sessionStorage.getItem('shopId');//员工对应的店铺ID
-        this.isSystem = false
+      }
+    },
+    watch:{
+      isSystem(val){
+        console.log(val)
       }
     }
   }
