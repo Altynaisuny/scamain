@@ -14,15 +14,61 @@
         </el-input>
       </el-col>
     </el-row>
+    <el-row style="margin-top: 20px;">
+      <el-col :span="6" :offset="9">
+        <el-button type="primary" icon="search" @click="search">搜索</el-button>
+      </el-col>
+    </el-row>
+    <el-row style="margin-top: 20px;">
+      <el-col :span="6" :offset="9">
+        <el-table
+          :data="tableData"
+          style="width: 100%">
+          <el-table-column type="expand">
+            <template scope="props">
+              <el-form label-position="left" inline class="demo-table-expand">
+                <el-form-item label="电话">
+                  <span>{{ props.row.phone }}</span>
+                </el-form-item>
+                <el-form-item label="地址">
+                  <span>{{ props.row.adderss }}</span>
+                </el-form-item>
+                <el-form-item label="余额">
+                  <span>{{ props.row.balance }}</span>
+                </el-form-item>
+                <el-form-item label="会员级别">
+                  <span>{{ props.row.level }}</span>
+                </el-form-item>
+                <el-form-item label="消费金额">
+                  <span>{{ props.row.cost }}</span>
+                </el-form-item>
+                <el-form-item label="备注">
+                  <span>{{ props.row.remark }}</span>
+                </el-form-item>
+              </el-form>
+            </template>
+          </el-table-column>
+          <el-table-column
+            label="IC卡号码"
+            prop="cardId">
+          </el-table-column>
+          <el-table-column
+            label="昵称"
+            prop="name">
+          </el-table-column>
+        </el-table>
+      </el-col>
+
+    </el-row>
     <el-row style="margin-top: 30px;">
       <el-col :span="6" :offset="9">
         <el-radio class="radio" v-model="state" label="0">用户充值</el-radio>
         <el-radio class="radio" v-model="state" label="1">用户余额修改</el-radio>
       </el-col>
     </el-row>
-    <el-row>
-      <el-col :spna="2" :offset="13">
-        <el-tag type="primary">余额：￥{{cost}}元</el-tag>
+    <el-row style="margin-top: 20px;">
+      <el-col :spna="2" :offset="9">
+        <el-tag type="primary">余额：￥{{tableData.balance}}元</el-tag>
       </el-col>
     </el-row>
     <el-row style="margin-top: 30px;">
@@ -71,7 +117,8 @@
         state:'0',
         name:'',
         inputState:'用户充值',
-        cost:''
+        cost:'',
+        tableData: []
       }
     },
     components: {
@@ -116,6 +163,27 @@
       reset(){
         this.name='';
         this.cardId=''
+      },
+      //查询用户信息
+      search(){
+        if (this.name !=='' || this.cardId !== ''){
+          this.$http.post('/lease/user/find.action',{
+            cardId:this.cardId,
+            name:this.name
+          }).then((response)=>{
+            let body = response.data
+            if (body.code === 0 ){
+              this.tableData = body.data
+            } else {
+              this.$message({
+                type: 'error',
+                message: body.message
+              });
+            }
+          },(error)=>{});
+        } else {
+          this.tableData = [];
+        }
       }
     },
     watch:{
@@ -151,5 +219,17 @@
     color: #ddd;
   }
   }
+  }
+  .demo-table-expand {
+    font-size: 0;
+  }
+  .demo-table-expand label {
+    width: 90px;
+    color: #99a9bf;
+  }
+  .demo-table-expand .el-form-item {
+    margin-right: 0;
+    margin-bottom: 0;
+    width: 50%;
   }
 </style>

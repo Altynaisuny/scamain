@@ -2,7 +2,7 @@
   <div id="app-goodsInfo">
 
     <el-row class="app-goodsInfo-search-input">
-      <el-col :span="4" :offset="2">
+      <el-col :span="4">
         <el-input v-model="inputCategoryName" placeholder="请输入产品类别名称" autofocus></el-input>&nbsp;
       </el-col>
       <el-col :span="4">
@@ -13,6 +13,9 @@
       </el-col>
       <el-col :span="4">
         <el-input v-model="inputGoodsName" placeholder="请输入产品名称"></el-input>
+      </el-col>
+      <el-col :span="4">
+        <el-input v-model="inputBar" placeholder="条形码"></el-input>
       </el-col>
       <el-col :span="4">
         <el-button type="primary" icon="search" @click="search">搜索</el-button>
@@ -43,7 +46,12 @@
             >
           </el-table-column>
           <el-table-column
-            prop="describe"
+            prop="bar"
+            label="条码"
+          >
+          </el-table-column>
+          <el-table-column
+            prop="describes"
             label="产品描述"
             >
           </el-table-column>
@@ -89,8 +97,11 @@
         <el-form-item label="商品类别" :label-width="EditFormLabelWidth">
           <el-input v-model="form.categoryId" auto-complete="off"></el-input>
         </el-form-item>
+        <el-form-item label="商品条码" :label-width="EditFormLabelWidth">
+          <el-input v-model="form.bar" auto-complete="off"></el-input>
+        </el-form-item>
         <el-form-item label="描述" :label-width="EditFormLabelWidth">
-          <el-input v-model="form.describe" auto-complete="off"></el-input>
+          <el-input v-model="form.describes" auto-complete="off"></el-input>
         </el-form-item>
         <el-form-item label="备注" :label-width="EditFormLabelWidth">
           <el-input v-model="form.remark" auto-complete="off"></el-input>
@@ -123,6 +134,8 @@
        inputCategoryId:'',
        //	产品id
        inputGoodsId:'',
+       //条形码
+       inputBar:'',
        //表数据
        tableData: [],
        //编辑
@@ -131,7 +144,7 @@
          goodsId:'',
          categoryId:'',
          goodsName:'',
-         describe:'',
+         describes:'',
          remark:''
        },
        //搜索框宽度
@@ -149,7 +162,11 @@
     methods:{
       //编辑
       handleEdit(index, row){
-        this.form.goodsId = row.goodsId
+        this.form.goodsId = row.goodsId;
+        this.form.goodsName = row.goodsName;
+        this.form.categoryId = row.categoryId;
+        this.form.describes = row.describes;
+        this.form.remark = row.remark;
         this.dialogFormVisible = true
       },
       //删除
@@ -176,6 +193,7 @@
                 message: body.message
               });
             }
+            this.search();
           },(error)=>{});
         }).catch(() => {
           this.$message({
@@ -191,14 +209,12 @@
           categoryName:this.inputCategoryName,
           categoryId:this.categoryId,
           goodsId:this.goodsId,
-          goodsName:this.goodsName
+          goodsName:this.goodsName,
+          bar:this.inputBar
         }).then((response)=>{
           let body = response.data
           if (body.code === 0 ){
-            this.$message({
-              type: 'success',
-              message: body.message
-            });
+          this.tableData = body.data;
           } else {
             this.$message({
               type: 'error',
@@ -237,6 +253,7 @@
                 type: 'success',
                 message: body.message
               });
+              this.search();
             } else {
               this.$message({
                 type: 'error',

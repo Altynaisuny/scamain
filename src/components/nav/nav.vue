@@ -84,7 +84,8 @@
             this.$router.push("/workBeach/shopManage");
             break;
           case "loginAgain":
-            this.$router.push("/index");
+            this.logout();
+            this.$router.push("/index.html");
             break;
           case "modifyPassword":
             this.$router.push("/workBeach/modifyPassword");
@@ -95,7 +96,8 @@
               cancelButtonText: '取消',
               type: 'warning'
             }).then(() => {
-              this.$router.push('/');
+              this.logout();
+              this.$router.push('/index.html');
               this.$message({
                 type: 'success',
                 message: '切换成功!'
@@ -113,23 +115,8 @@
               cancelButtonText: '取消',
               type: 'warning'
             }).then(() => {
-              this.$http.post('/lease/woker/unlogin.action',{}).then((response)=>{
-                let body = response.data
-                if (body.code === 0 ){
-                  this.$message({
-                    type: 'success',
-                    message: body.message
-                  });
-                  this.$router.push('/index');//跳转至登录
-                  sessionStorage.removeItem('token')//移除token
-                } else {
-                  this.$message({
-                    type: 'error',
-                    message: body.message
-                  });
-                }
-              },(error)=>{});
 
+              this.logout();
             }).catch(() => {
               this.$message({
                 type: 'info',
@@ -141,6 +128,26 @@
       },
       handleSelect(){
 
+      },
+      logout(){
+        this.$http.post('/lease/woker/unlogin.action',{
+          token:sessionStorage.getItem('token')
+        }).then((response)=>{
+          let body = response.data
+          if (body.code === 0 ){
+            this.$message({
+              type: 'success',
+              message: body.message
+            });
+            this.$router.push('/index');//跳转至登录
+            sessionStorage.removeItem('token')//移除token
+          } else {
+            this.$message({
+              type: 'error',
+              message: body.message
+            });
+          }
+        },(error)=>{});
       }
     },
     mounted(){

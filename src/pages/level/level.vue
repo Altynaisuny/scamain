@@ -20,11 +20,11 @@
         style="width: 100%">
         <el-table-column
           prop="gradeId"
-          label="会员编号">
+          label="优惠ID">
         </el-table-column>
         <el-table-column
           prop="gradeName"
-          label="优惠名称">
+          label="会员级别">
         </el-table-column>
         <el-table-column
           prop="discounts"
@@ -46,7 +46,7 @@
     </el-row>
     <el-dialog title="等级信息修改" :visible.sync="dialogFormVisible">
       <el-form :model="formEdit">
-        <el-form-item label="会员编号" :label-width="formLabelWidth" :rules="[{ required: true, message: '不能为空'}]">
+        <el-form-item label="优惠ID" :label-width="formLabelWidth" :rules="[{ required: true, message: '不能为空'}]">
           <el-input v-model="formEdit.gradeId" auto-complete="off" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="优惠名称" :label-width="formLabelWidth" :rules="[{ required: true, message: '不能为空'}]">
@@ -73,9 +73,6 @@
         </div>
         <div class="text item">
           <el-form :model="formNew">
-            <el-form-item label="会员编号" :label-width="formLabelWidth">
-              <el-input v-model="formNew.gradeId" auto-complete="off"></el-input>
-            </el-form-item>
             <el-form-item label="优惠名称" :label-width="formLabelWidth">
               <el-input v-model="formNew.gradeName" auto-complete="off"></el-input>
             </el-form-item>
@@ -112,7 +109,6 @@
         labelPosition:'left',
         dialogNewShop:false,
         formNew:{
-          gradeId: '',
           gradeName:'',
           discounts:'',
           consumption:''
@@ -144,10 +140,9 @@
           this.dialogFormVisible = false;
           //此处发送请求
           this.$http.post('/lease/grade/update.action',{
-            gradeId: this.formEdit.gradeId,
-            gradeName:this.formEdit.gradeName,
-            discounts:this.formEdit.discounts,
-            consumption:this.formEdit.consumption
+            gradeName:this.formNew.gradeName,
+            discounts:this.formNew.discounts,
+            consumption:this.formNew.consumption
           }).then((response)=>{
             let body = response.data;
             if (body.code === 0 ){
@@ -156,6 +151,9 @@
                 message: body.message+"id"+body.data.gradeId
               });
               this.search();
+              this.formNew.gradeName = '';
+              this.formNew.discounts = '';
+              this.formNew.consumption = '';
             } else {
               this.$message({
                 type: 'error',

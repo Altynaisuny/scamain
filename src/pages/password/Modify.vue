@@ -2,19 +2,19 @@
   <div id="app-modify">
     <el-row>
       <el-col :span="8" :offset="8">
-        <el-form :model="ruleForm2" :rules="rules2" ref="ruleForm2" label-width="100px" class="demo-ruleForm">
-          <el-form-item label="用户名" prop="username" :rules="[{ required: true, message: '不能为空'}]">
-            <el-input type="text" v-model="ruleForm2.checkusername" auto-complete="off"></el-input>
+        <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px">
+          <el-form-item label="账户" prop="username" :rules="[{ required: true, message: '不能为空'}]">
+            <el-input type="text" v-model="ruleForm.username" auto-complete="off"></el-input>
           </el-form-item>
           <el-form-item label="原密码" prop="password" :rules="[{ required: true, message: '不能为空'}]">
-            <el-input type="password" v-model="ruleForm2.checkpassword" auto-complete="off"></el-input>
+            <el-input type="password" v-model="ruleForm.password" auto-complete="off"></el-input>
           </el-form-item>
           <el-form-item label="新密码" prop="newPassword" :rules="[{ required: true, message: '不能为空'}]">
-            <el-input type="password" v-model="ruleForm2.checknewPassword"></el-input>
+            <el-input type="password" v-model="ruleForm.newPassword"></el-input>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" @click="submitForm('ruleForm2')">提交</el-button>
-            <el-button @click="resetForm('ruleForm2')">重置</el-button>
+            <el-button type="primary" @click="submitForm('ruleForm')">提交</el-button>
+            <el-button @click="resetForm('ruleForm')">重置</el-button>
           </el-form-item>
         </el-form>
       </el-col>
@@ -29,45 +29,16 @@
   export default {
     components: {
       ElCol,
-      ElRow},
+      ElRow
+    },
     data() {
-      var checkusername = (rule, value, callback) => {
-        if (!value) {
-          return callback(new Error('用户名不能为空'));
-        }
-      };
-      var checkpassword = (rule, value, callback) => {
-        if (value === '') {
-          callback(new Error('请输入密码'));
-        } else {
-          return  callback();
-        }
-      };
-
-      var checknewPassword = (rule, value, callback) => {
-        if (value === '') {
-          callback(new Error('请输入密码'));
-        }  else {
-          callback();
-        }
-      };
       return {
-        ruleForm2: {
+        ruleForm: {
           username: '',
           password: '',
           newPassword: ''
         },
-        rules2: {
-          username: [
-            { validator: checkusername, trigger: 'blur' }
-          ],
-          password: [
-            { validator: checkpassword, trigger: 'blur' }
-          ],
-          newPassword: [
-            { validator: checknewPassword, trigger: 'blur' }
-          ]
-        },
+        rules: {},
 
       }
     },
@@ -80,30 +51,51 @@
           }
         });
         //校验成功
-        if (validStatus){
-          this.$http.post('/lease/woker/updatePwd.action',{
-            username: this.ruleForm2.username,
-            password: this.ruleForm2.password,
-            newPassword: this.ruleForm2.newPassword
-          }).then((response)=>{
+        if (validStatus) {
+          this.$http.post('/lease/woker/updatePwd.action', {
+            username: this.ruleForm.username,
+            password: this.ruleForm.password,
+            newPassword: this.ruleForm.newPassword
+          }).then((response) => {
             let body = response.data
-            if (body.code === 0 ){
+            if (body.code === 0) {
               this.$message({
                 type: 'success',
                 message: body.message
               });
+              this.resetForm(formName);
+              this.$router.push("/index.html");//更改密码成功，重新登录
             } else {
               this.$message({
                 type: 'error',
                 message: body.message
               });
             }
-          },(error)=>{});
+          }, (error) => {
+          });
+        } else {
+          return false;
         }
       },
       resetForm(formName) {
         this.$refs[formName].resetFields();
       }
+    },
+    mounted(){
+      this.$http.post('/lease/woker/userstart.action',{
+        shopId:this.inputshopId,
+        username:this.inputusername
+      }).then((response)=>{
+        let body = response.data
+        if (body.code === 0 ){
+          this.tableData = body.data
+        } else {
+          this.$message({
+            type: 'error',
+            message: body.message
+          });
+        }
+      },(error)=>{});
     }
   }
 </script>

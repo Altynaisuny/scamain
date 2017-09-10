@@ -41,7 +41,7 @@
           </el-table-column>
           <el-table-column
             prop="goodsName"
-            label="phone"
+            label="电话"
           >
           </el-table-column>
           <el-table-column
@@ -87,6 +87,7 @@
           :page-count="pagination.pageCount"
           :page-size="pagination.pageSize"
           :current-page="pagination.currentPage"
+          @current-change="flip"
         >
         </el-pagination>
       </el-col>
@@ -216,15 +217,11 @@
           cardId: this.inputcardId,
           name: this.inputname,
           phone: this.inputphone,
-          level: this.inputlevel
+          level: this.inputlevel  //todo  根据用户级别表检索，用户的级别
         }).then((response) => {
           let body = response.data
           if (body.code === 0) {
             this.tableData = body.data
-            this.$message({
-              type: 'success',
-              message: body.message
-            });
           } else {
             this.$message({
               type: 'error',
@@ -311,6 +308,10 @@
           this.$message({type: 'info', message: '已取消操作'});
         });
       },
+      flip(val){
+        this.pagination.currentPage = val
+        this.search();
+      }
     },
     mounted() {
       this.search();

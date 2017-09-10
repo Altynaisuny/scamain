@@ -87,6 +87,7 @@
             password: this.userInfo.pass
           }).then( (response)=> {
             let body = response.data;
+            console.log(response);
             if (body.code === 0) {
               this.$store.dispatch('setToken',body.token);
 

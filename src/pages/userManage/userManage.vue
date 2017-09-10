@@ -20,12 +20,12 @@
       <el-table-column
         prop="username"
         label="员工名称"
-        width="180">
+        >
       </el-table-column>
       <el-table-column
         prop="shopName"
-        label="所属店铺名称"
-        width="180">
+        label="所属店铺"
+        >
       </el-table-column>
       <el-table-column
         prop="phone"
@@ -34,7 +34,7 @@
       <el-table-column
         prop="remark"
         label="备注"
-        width="180">
+        >
       </el-table-column>
       <el-table-column
         label="操作">
@@ -54,9 +54,16 @@
         <el-form-item label="密码" :label-width="formLabelWidth">
           <el-input v-model="formEdit.password" auto-complete="off"></el-input>
         </el-form-item>
-        <el-form-item label="店铺" :label-width="formLabelWidth">
-          <el-input v-model="formEdit.shopId" auto-complete="off"></el-input>
-        </el-form-item>
+        <el-select v-model="formEdit.shopId" placeholder="请选择" @change="editChange">
+          <el-option
+            v-for="item in options"
+            :key="item.value"
+            :label="item.name"
+            :value="item.shopId">
+            <span style="float: left">{{ item.shopId }}</span>
+            <span style="float: right; color: #8492a6; font-size: 13px">{{ item.name }}</span>
+          </el-option>
+        </el-select>
         <el-form-item label="员工电话" :label-width="formLabelWidth">
           <el-input v-model="formEdit.phone" auto-complete="off"></el-input>
         </el-form-item>
@@ -70,25 +77,37 @@
       </div>
     </el-dialog>
 
-    <el-dialog title="新增用户" :visible.sync="dialogNewShop">
+    <el-dialog title="新增员工" :visible.sync="dialogNewShop">
       <el-card class="box-card">
         <div slot="header" class="clearfix">
-          <span style="line-height: 36px;">新增店铺</span>
-          <el-button style="float: right;" type="primary" @click="add">增加</el-button>
+          <span style="line-height: 36px;">新增员工</span>
+          <el-button style="float: right;" type="primary" @click="add('formNew')">增加</el-button>
         </div>
         <div class="text item">
-          <el-form :model="formNew">
-            <el-form-item label="密码" :label-width="formLabelWidth">
-              <el-input v-model="formEdit.password" auto-complete="off"></el-input>
+          <el-form :model="formNew" ref="formNew" >
+            <el-form-item label="用户名" :label-width="formLabelWidth" prop="username" :rules="[{ required: true, message: '不能为空'}]">
+              <el-input v-model="formNew.username" auto-complete="off"></el-input>
             </el-form-item>
-            <el-form-item label="店铺" :label-width="formLabelWidth">
-              <el-input v-model="formEdit.shopId" auto-complete="off"></el-input>
+            <el-form-item label="密码" :label-width="formLabelWidth" prop="password" :rules="[{ required: true, message: '不能为空'}]">
+              <el-input v-model="formNew.password" auto-complete="off"></el-input>
             </el-form-item>
-            <el-form-item label="员工电话" :label-width="formLabelWidth">
-              <el-input v-model="formEdit.phone" auto-complete="off"></el-input>
+            <el-form-item label="所属店铺" :label-width="formLabelWidth" prop="shopId" :rules="[{ required: true, message: '不能为空'}]">
+              <el-select v-model="formNew.shopId" placeholder="请选择" @change="addChange">
+                <el-option
+                  v-for="item in options"
+                  :key="item.value"
+                  :label="item.name"
+                  :value="item.shopId">
+                  <span style="float: left">{{ item.shopId }}</span>
+                  <span style="float: right; color: #8492a6; font-size: 13px">{{ item.name }}</span>
+                </el-option>
+              </el-select>
             </el-form-item>
-            <el-form-item label="员工备注" :label-width="formLabelWidth">
-              <el-input v-model="formEdit.remark" auto-complete="off"></el-input>
+            <el-form-item label="电话" :label-width="formLabelWidth">
+              <el-input v-model="formNew.phone" auto-complete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="备注" :label-width="formLabelWidth">
+              <el-input v-model="formNew.remark" auto-complete="off"></el-input>
             </el-form-item>
           </el-form>
         </div>
@@ -117,21 +136,25 @@
         },
         formLabelWidth: '120px',
         formNew: {
+          username: '',
           password: '',
-          shopId: '',
+          shopId:'',
           phone:'',
-          remark:'',
+          remark:''
         },
         //新增用户dialog
         dialogNewShop:false,
         inputshopId:'',
-        inputusername:''
+        inputusername:'',
+        //下拉框
+        options:[]
       }
     },
     methods:{
       handleEdit(index, row){
         this.dialogFormVisible = true
         this.formEdit.username = row.username
+        this.formEdit.password = row.password
       },
       //删除用户
       handleDelete(index, row){
@@ -158,7 +181,7 @@
               });
             }
           },(error)=>{});
-
+          this.search();
         }).catch(() => {
           this.$message({
             type: 'info',
@@ -166,26 +189,49 @@
           });
         });
       },
-      add(){
-        this.$http.post('/lease/woker/update.action',{
-          password:this.formNew.password,
-          shopId:this.formNew.shopId,
-          phone:this.formNew.phone,
-          remark:this.formNew.remark
-        }).then((response)=>{
-          let body = response.data
-          if (body.code === 0 ){
-            this.$message({
-              type: 'success',
-              message: body.message
-            });
-          } else {
-            this.$message({
-              type: 'error',
-              message: body.message
-            });
+      add(formName){
+        let submitForm = false ;
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            submitForm = true;
           }
-        },(error)=>{});
+        });
+        if (submitForm){
+          this.$confirm('添加用户, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            this.$http.post('/lease/woker/update.action',{
+              username:this.formNew.username,
+              password:this.formNew.password,
+              shopId:this.formNew.shopId,
+              phone:this.formNew.phone,
+              remark:this.formNew.remark
+            }).then((response)=>{
+              let body = response.data
+              if (body.code === 0 ){
+                this.$message({
+                  type: 'success',
+                  message: body.message
+                });
+                this.search();
+              } else {
+                this.$message({
+                  type: 'error',
+                  message: body.message
+                });
+              }
+            },(error)=>{});
+
+          }).catch(() => {
+            this.$message({
+              type: 'info',
+              message: '已取消'
+            });
+          });
+
+        }
 
       },
       //取消修改
@@ -239,15 +285,11 @@
       search(){
         this.$http.post('/lease/woker/userstart.action',{
           shopId:this.inputshopId,
-          name:this.inputusername
+          username:this.inputusername
         }).then((response)=>{
-          let body = response.data
+          let body = response.data;
           if (body.code === 0 ){
             this.tableData = body.data
-            this.$message({
-              type: 'success',
-              message: body.message
-            });
           } else {
             this.$message({
               type: 'error',
@@ -256,10 +298,30 @@
           }
         },(error)=>{});
 
+      },
+      addChange(val){
+        this.formNew.shopId = val;
+      },
+      editChange(val){
+        this.formEdit.shopId = val;
       }
+
     },
     mounted(){
-      this.search()
+      //获取店铺下拉框
+      this.$http.post('/lease/shop/find.action',{
+      }).then((response)=>{
+        let body = response.data
+        if (body.code === 0 ){
+         this.options = body.data
+        } else {
+          this.$message({
+            type: 'error',
+            message: body.message
+          });
+        }
+      },(error)=>{});
+      this.search();
     }
   }
 </script>

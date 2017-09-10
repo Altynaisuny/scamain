@@ -6,8 +6,10 @@
           <el-option
             v-for="item in options"
             :key="item.value"
-            :label="item.label"
-            :value="item.value">
+            :label="item.name"
+            :value="item.id">
+            <span style="float: left">{{ item.id }}</span>
+            <span style="float: right; color: #8492a6; font-size: 13px">{{ item.name }}</span>
           </el-option>
         </el-select>
       </el-col>
@@ -116,10 +118,7 @@
   export default {
     data() {
       return {
-        options: [{
-          value: '选项1',
-          label: '黄金糕'
-        }],
+        options: [],
         loading: false,
         startTime: '',
         endTime: '',
@@ -157,10 +156,7 @@
           let body = response.data
           if (body.code === 0 ){
             this.tableData = body.data
-            this.$message({
-              type: 'success',
-              message: body.message
-            });
+
           } else {
             this.$message({
               type: 'error',
@@ -181,6 +177,19 @@
     },
     mounted() {
       this.search();
+      this.$http.post('/lease/dictionary/find.action',{
+        id:'1000'
+      }).then((response)=>{
+        let body = response.data
+        if (body.code === 0 ){
+          this.options = body.data.list;
+        } else {
+          this.$message({
+            type: 'error',
+            message: body.message
+          });
+        }
+      },(error)=>{});
     },
     components: {
       ElCol, ElRow
