@@ -35,7 +35,6 @@ instance.interceptors.request.use(
     if (sessionStorage.token){
       config.headers['token'] = sessionStorage.token;
     }
-    console.log(config);
     return config;
   },
   error => {}

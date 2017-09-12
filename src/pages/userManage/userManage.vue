@@ -2,7 +2,7 @@
   <div id="app-userManage">
     <el-row>
       <el-col :span="4" :offset="6">
-        <el-select v-model="inputshopId" placeholder="员工所属店铺">
+        <el-select v-model="inputShopId" placeholder="员工所属店铺">
           <el-option
             v-for="item in options"
             :key="item.value"
@@ -14,10 +14,11 @@
         </el-select>
       </el-col>
       <el-col :span="4">
-        <el-input v-model="inputusername" placeholder="员工名称"></el-input>
+        <el-input v-model="inputUserName" placeholder="员工名称"></el-input>
       </el-col>
       <el-col :span="4">
         <el-button type="primary" icon="search" @click="search">搜索</el-button>
+        <el-button type="text" @click="reset">重置</el-button>
       </el-col>
       <el-button type="primary" icon="plus" @click="dialogNewShop = true">新增</el-button>
     </el-row>
@@ -87,7 +88,7 @@
       </div>
     </el-dialog>
 
-    <el-dialog title="新增" :visible.sync="dialogNewShop">
+    <el-dialog title="新增" :visible.sync="dialogNewShop" @close="test">
       <el-card class="box-card">
         <div slot="header" class="clearfix">
           <span style="line-height: 36px;">新增员工</span>
@@ -155,23 +156,25 @@
         //新增用户dialog
         dialogNewShop:false,
         //员工所属店铺ID
-        inputshopId:'',
+        inputShopId:'',
         //员工名称
-        inputusername:'',
+        inputUserName:'',
         //下拉框
         options:[]
       }
     },
     methods:{
       handleEdit(index, row){
-        this.dialogFormVisible = true
-        this.formEdit.username = row.username
+        this.dialogFormVisible = true;
+        this.formEdit.username = row.username;
         this.formEdit.phone = row.phone;
-        this.formEdit.remark =row.remark
+        this.formEdit.remark =row.remark;
+        this.formEdit.shopId = row.shopId;
+        this.formEdit.password = '';
       },
       //删除用户
       handleDelete(index, row){
-        let username = row.username
+        let username = row.username;
         this.$confirm('删除用户, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
@@ -181,7 +184,7 @@
           this.$http.post('http://lease.loverqi.cn:8080/lease/woker/delete.action',{
             username:username
           }).then((response)=>{
-            let body = response.data
+            let body = response.data;
             if (body.code === 0 ){
               this.$message({
                 type: 'success',
@@ -223,13 +226,13 @@
               phone:this.formNew.phone,
               remark:this.formNew.remark
             }).then((response)=>{
-              let body = response.data
+              let body = response.data;
               if (body.code === 0 ){
                 this.$message({
                   type: 'success',
                   message: body.message
                 });
-
+                this.resetForm('formNew');//表单重置
                 this.search();
               } else {
                 this.$message({
@@ -269,11 +272,11 @@
         }).then(() => {
           this.dialogFormVisible = false;
           this.$http.post('http://lease.loverqi.cn:8080/lease/woker/update.action',{
-            username: this.formNew.username,
-            password:this.formNew.password,
-            shopId:this.formNew.shopId,
-            phone:this.formNew.phone,
-            remark:this.formNew.remark
+            username: this.formEdit.username,
+            password:this.formEdit.password,
+            shopId:this.formEdit.shopId,
+            phone:this.formEdit.phone,
+            remark:this.formEdit.remark
           }).then((response)=>{
             let body = response.data
             if (body.code === 0 ){
@@ -297,13 +300,12 @@
             message: '已取消操作'
           });
         });
-        this.resetForm('formNew')//表单重置
       },
 
       search(){
         this.$http.post('http://lease.loverqi.cn:8080/lease/woker/userstart.action',{
-          shopId:this.inputshopId,
-          username:this.inputusername
+          shopId:this.inputShopId,
+          username:this.inputUserName
         }).then((response)=>{
           let body = response.data;
           if (body.code === 0 ){
@@ -323,8 +325,15 @@
       editChange(val){
         this.formEdit.shopId = val;
       },
-      resetForm(formName) {
+      reset(){
+        this.inputShopId = '';
+        this.inputUserName = '';
+      },
+      resetForm(formName){
         this.$refs[formName].resetFields();
+      },
+      test(){
+        this.resetForm('formNew');
       }
 
     },
@@ -332,7 +341,7 @@
       //获取店铺下拉框
       this.$http.post('http://lease.loverqi.cn:8080/lease/shop/find.action',{
       }).then((response)=>{
-        let body = response.data
+        let body = response.data;
         if (body.code === 0 ){
          this.options = body.data
         } else {
@@ -343,13 +352,6 @@
         }
       },(error)=>{});
       this.search();
-    },
-    watch:{
-      dialogNewShop :function (val) {
-        if (!val){
-          this.resetForm('formNew')
-        }
-      }
     }
   }
 </script>
