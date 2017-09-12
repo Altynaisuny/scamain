@@ -15,8 +15,7 @@ npm run dev
 npm run build
 
 #  build in webpack
-webpack --color --progress
+npm run pack
 
 ```
 
-For detailed explanation on how things work, consult the [docs for vue-loader](http://vuejs.github.io/vue-loader).
