@@ -7,7 +7,6 @@
   "scripts": {
     "dev": "cross-env NODE_ENV=development webpack-dev-server --open --hot",
     "build": "cross-env NODE_ENV=production webpack --progress --hide-modules",
-    "mock": "nodemon -w ./mock config/mock-server.js",
     "pack": "webpack --progress --color"
   },
   "dependencies": {
@@ -32,8 +31,6 @@
     "less": "^2.7.2",
     "less-loader": "^4.0.5",
     "loader-utils": "^1.0.4",
-    "nw": "^0.24.4",
-    "nw-builder": "^3.4.1",
     "style-loader": "^0.18.2",
     "vue-loader": "^12.1.0",
     "vue-template-compiler": "^2.3.3",

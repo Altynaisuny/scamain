@@ -135,7 +135,7 @@
           type: 'warning'
         }).then(() => {
           //此处发送请求
-          this.$http.post('/lease/shop/delete.action',{
+          this.$http.post('http://lease.loverqi.cn:8080/lease/shop/delete.action',{
             shopId:shopId
           }).then((response)=>{
             let body = response.data
@@ -161,7 +161,7 @@
         });
       },
       add(){
-        this.$http.post('/lease/shop/update.action',{
+        this.$http.post('http://lease.loverqi.cn:8080/lease/shop/update.action',{
           name: this.formNew.name,
           phone:this.formNew.phone,
           adderss:this.formNew.adderss
@@ -198,7 +198,7 @@
           type: 'warning'
         }).then(() => {
           this.dialogFormVisible = false;
-          this.$http.post('/lease/shop/update.action',{
+          this.$http.post('http://lease.loverqi.cn:8080/lease/shop/update.action',{
             shopId:this.formEdit.shopId,
             name:this.formEdit.name,
             adderss:this.formEdit.adderss,
@@ -230,7 +230,7 @@
       },
 
       search(){
-        this.$http.post('/lease/shop/find.action',{
+        this.$http.post('http://lease.loverqi.cn:8080/lease/shop/find.action',{
           shopId:this.inputshopId,
           name:this.inputname
         }).then((response)=>{

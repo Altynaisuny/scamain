@@ -71,7 +71,7 @@
         //todo 表单校验有问题，需要处理
         if (submitState){
           //发送
-          this.$http.post('/lease/goods/update.action',{
+          this.$http.post('http://lease.loverqi.cn:8080/lease/goods/update.action',{
             categoryId:this.form.categoryId,
             goodsName:this.form.goodsName,
             describe:this.form.describe,
@@ -106,7 +106,7 @@
       ElCol, ElRow
     },
     mounted(){
-      this.$http.post('/lease/category/find.action',{
+      this.$http.post('http://lease.loverqi.cn:8080/lease/category/find.action',{
       }).then((response)=>{
         let body = response.data;
         if (body.code === 0 ){
@@ -122,5 +122,4 @@
   }
 </script>
 <style lang="less" scoped>
-  @import "goodRegister.less";
 </style>

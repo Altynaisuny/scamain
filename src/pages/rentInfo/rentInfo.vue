@@ -25,16 +25,20 @@
       <el-col :span="4">
         <el-date-picker
           v-model="startTime"
-          type="date"
-          placeholder="选择开始日期">
+          type="datetime"
+          placeholder="选择开始日期"
+          @change="getStartTime"
+        >
         </el-date-picker>
       </el-col>
       </el-col>
       <el-col :span="4">
         <el-date-picker
           v-model="endTime"
-          type="date"
-          placeholder="选择结束日期">
+          type="datetime"
+          placeholder="选择结束日期"
+          @change="getEndTime"
+        >
         </el-date-picker>
       </el-col>
       <el-col :span="3">
@@ -84,11 +88,11 @@
           label="租赁的总费用">
         </el-table-column>
         <el-table-column
-          prop="borrowId"
+          prop="borrowName"
           label="租借的店铺">
         </el-table-column>
         <el-table-column
-          prop="alsoId"
+          prop="alsoName"
           label="结束租赁的店铺">
         </el-table-column>
         <el-table-column
@@ -104,6 +108,7 @@
           :page-count="pagination.pageCount"
           :page-size="pagination.pageSize"
           :current-page="pagination.currentPage"
+          @current-change="flip"
         >
         </el-pagination>
       </el-col>
@@ -125,9 +130,9 @@
         tableData: [],
         //分页配置
         pagination:{
-          pageCount:100,
+          pageCount:1000,
           pageSize:10,//页面显示条数
-          page:1//查询页码
+          currentPage:1//查询页码
         },
         //订单的状态
         state:'',
@@ -143,8 +148,8 @@
     methods: {
 
       search(){
-        this.$http.post('/lease/flowing/leasegoods.action',{
-          page:this.pagination.page,
+        this.$http.post('http://lease.loverqi.cn:8080/lease/flowing/leasegoods.action',{
+          page:this.pagination.currentPage,
           pageSize:this.pagination.pageSize,
           state:this.state,
           cardId:this.cardId,
@@ -154,9 +159,9 @@
           endTime:this.endTime
         }).then((response)=>{
           let body = response.data
+          console.log(response);
           if (body.code === 0 ){
             this.tableData = body.data
-
           } else {
             this.$message({
               type: 'error',
@@ -173,11 +178,23 @@
         this.cardId=''
         this.startTime=''
         this.endTime=''
+      },
+
+      getStartTime(val){
+        this.startTime = val;
+      },
+
+      getEndTime(val){
+        this.endTime = val;
+      },
+      flip(val) {
+        this.pagination.currentPage = val;
+        this.search();
       }
     },
     mounted() {
       this.search();
-      this.$http.post('/lease/dictionary/find.action',{
+      this.$http.post('http://lease.loverqi.cn:8080/lease/dictionary/find.action',{
         id:'1000'
       }).then((response)=>{
         let body = response.data

@@ -6,20 +6,20 @@ Vue.use(Vuex);
 export default new Vuex.Store({
 
   state: {
-    userInfo: {},
+    username: '',
     isSystem: false,
     token: '',
     shopId:''
   },
 
   getters:{
-    getUserInfo: state => state.userInfo,
+    getUserName: state => state.username,
     getToken : state => state.token,
     getIsSystem : state => state.isSystem
   },
   actions: {
-    setUserInfo({commit}, userInfo) {
-      commit('SET_USERINFO', userInfo)
+    setUsername({commit}, username) {
+      commit('SET_USERNAME', username)
     },
     setToken({commit}, token) {
       commit('SET_TOKEN', token)
@@ -33,8 +33,9 @@ export default new Vuex.Store({
   },
 
   mutations: {
-    SET_USERINFO(state, userInfo) {
-      state.userinfo = userInfo
+    SET_USERNAME(state, username) {
+      sessionStorage.setItem('username', username)
+      state.username = username
     },
     SET_TOKEN(state, token) {
       sessionStorage.setItem('token', token)

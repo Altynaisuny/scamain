@@ -205,7 +205,7 @@
     },
     methods: {
       search() {
-        this.$http.post('/lease/price/find.action', {
+        this.$http.post('http://lease.loverqi.cn:8080/lease/price/find.action', {
           goodsId: this.goodsId,
           shopId: this.shopId
         }).then((response) => {
@@ -238,7 +238,7 @@
           type: 'warning'
         }).then(() => {
           //此处发送请求
-          this.$http.post('/lease/price/delete.action',{
+          this.$http.post('http://lease.loverqi.cn:8080/lease/price/delete.action',{
             priceId:row.priceId
           }).then((response)=>{
             let body = response.data
@@ -270,7 +270,7 @@
         }).then(() => {
           this.dialogFormVisible = false;
           //此处发送请求
-          this.$http.post('/lease/price/update.action',{
+          this.$http.post('http://lease.loverqi.cn:8080/lease/price/update.action',{
             duration:this.formNew.duration,
             pattern:this.formNew.pattern,
             price:this.formNew.price,
@@ -319,7 +319,7 @@
         }).then(() => {
           this.dialogFormVisible = false;
           //此处发送请求
-          this.$http.post('/lease/price/update.action',{
+          this.$http.post('http://lease.loverqi.cn:8080/lease/price/update.action',{
             priceId:this.formEdit.priceId,
             duration:this.formEdit.duration,
             pattern:this.formEdit.pattern,
@@ -358,7 +358,7 @@
       let systemState = sessionStorage.getItem('isSystem');
       if (systemState === 'true') {
         //管理员权限，查询系统所有的店铺信息
-        this.$http.post('/lease/shop/find.action', {
+        this.$http.post('http://lease.loverqi.cn:8080/lease/shop/find.action', {
         }).then((response) => {
           let body = response.data
           if (body.code === 0) {
@@ -374,5 +374,7 @@
   }
 </script>
 <style lang="less">
-  @import "./charging.less";
+  .app-charging-table{
+    margin-top: 20px;
+  }
 </style>

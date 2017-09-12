@@ -1,7 +1,9 @@
 <template>
   <div id="app-nav">
     <el-menu theme="dark" :default-active="activeIndex" class="el-menu-demo" mode="horizontal" @select="handleSelect">
-      <el-menu-item index="1" @click="navClick('rent')">返回租赁</el-menu-item>
+
+      <el-menu-item index="1" @click="navClick('rent')" v-if="!isSystem">返回租赁</el-menu-item>
+
       <el-submenu index="2">
         <template slot="title">信息管理</template>
         <el-menu-item index="2-1" @click="navClick('level')">等级管理</el-menu-item>
@@ -13,7 +15,8 @@
       <el-submenu index="3">
         <template slot="title">交易</template>
         <el-menu-item index="3-1" @click="navClick('cashFlow')">交易流水</el-menu-item>
-        <el-menu-item index="3-2" @click="navClick('recharge')">充值</el-menu-item>
+        <el-menu-item index="3-2" @click="navClick('cashFlowAll')">交易流水合计</el-menu-item>
+        <el-menu-item index="3-3" @click="navClick('recharge')">充值</el-menu-item>
       </el-submenu>
       <el-submenu index="4" >
         <template slot="title">登记</template>
@@ -22,13 +25,12 @@
       </el-submenu>
       <el-submenu index="5">
         <template slot="title">系统管理</template>
-        <el-menu-item index="5-1" @click="navClick('userManage')">员工管理</el-menu-item>
+        <el-menu-item index="5-1" @click="navClick('userManage')" v-if="isSystem">员工管理</el-menu-item>
         <el-menu-item index="5-2" @click="navClick('shopManage')">店铺管理</el-menu-item>
         <el-menu-item index="5-3" @click="navClick('toggleUser')">切换用户</el-menu-item>
         <el-menu-item index="5-4" @click="navClick('modifyPassword')">修改密码</el-menu-item>
-        <el-menu-item index="5-5" @click="navClick('blackList')">黑名单</el-menu-item>
-        <el-menu-item index="5-6" @click="navClick('loginAgain')">重新登录</el-menu-item>
-        <el-menu-item index="5-7" @click="navClick('logOut')">退出登录</el-menu-item>
+        <el-menu-item index="5-5" @click="navClick('loginAgain')">重新登录</el-menu-item>
+        <el-menu-item index="5-6" @click="navClick('logOut')">退出登录</el-menu-item>
       </el-submenu>
     </el-menu>
   </div>
@@ -77,6 +79,9 @@
           case "cashFlow":
             this.$router.push("/workBeach/cashFlow");
             break;
+          case "cashFlowAll":
+            this.$router.push("/workBeach/cashFlowAll");
+            break;
           case "recharge":
             this.$router.push("/workBeach/recharge");
             break;
@@ -115,7 +120,6 @@
               cancelButtonText: '取消',
               type: 'warning'
             }).then(() => {
-
               this.logout();
             }).catch(() => {
               this.$message({
@@ -130,7 +134,7 @@
 
       },
       logout(){
-        this.$http.post('/lease/woker/unlogin.action',{
+        this.$http.post('http://lease.loverqi.cn:8080/lease/woker/unlogin.action',{
           token:sessionStorage.getItem('token')
         }).then((response)=>{
           let body = response.data
@@ -139,8 +143,11 @@
               type: 'success',
               message: body.message
             });
-            this.$router.push('/index');//跳转至登录
+            this.$router.push('/index.html');//跳转至登录
             sessionStorage.removeItem('token')//移除token
+            sessionStorage.removeItem('shopId')
+            sessionStorage.removeItem('isSystem')
+            sessionStorage.removeItem('username')
           } else {
             this.$message({
               type: 'error',
@@ -151,7 +158,7 @@
       }
     },
     mounted(){
-      if (this.$store.state.isSystem){
+      if (sessionStorage.getItem('isSystem') === 'true'){
         this.isSystem = true;
       }
     }

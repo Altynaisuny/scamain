@@ -7,12 +7,12 @@
 
       <el-col :span="6" :offset="7">
         <el-input
-          v-model="inputValue"
+          v-model="QScode"
           placeholder="正在扫码"
           @blur="loseFocus('Event')"
           @focus="getFocus('Event')"
           class="app-rent-content-input"
-          @keyup.enter.native="doLogin"
+          @keyup.enter.native="search"
           autofocus
         >
         </el-input>
@@ -29,12 +29,13 @@
     </el-row>
     <el-row>
       <el-card class="box-card">
-        <div slot="header" class="clearfix" style="height: 50px;">
-          <el-col>
+        <div slot="header" class="clearfix" style="height: 100px;">
+          <el-col v-if="!rentOrReturnState">
             需要支付：
-            <el-tag type="primary">￥{{cost}}元</el-tag>
+            <el-tag type="danger" style="font-size: 30px">￥{{cost}}元</el-tag>
           </el-col>
           <el-col :span="3" :offset="4">
+            IC卡号码
             <el-input
               placeholder="IC卡号码"
               v-model="userInfo.cardId"
@@ -42,6 +43,7 @@
             </el-input>
           </el-col>
           <el-col :span="3" :offset="1">
+            姓名
             <el-input
               placeholder="昵称"
               v-model="userInfo.name"
@@ -49,6 +51,7 @@
             </el-input>
           </el-col>
           <el-col :span="3" :offset="1">
+            余额
             <el-input
               placeholder="余额"
               v-model="userInfo.balance"
@@ -56,6 +59,7 @@
             </el-input>
           </el-col>
           <el-col :span="3" :offset="1">
+            会员级别
             <el-input
               placeholder="会员级别"
               v-model="userInfo.level"
@@ -66,35 +70,34 @@
         <el-table
           :data="tableData"
           border
-          style="width: 100%">
+          style="width: 100%"
+          v-if="rentOrReturnState"
+        >
           <el-table-column
-            prop="id"
-            label="物品编号"
+            prop="goodsId"
+            label="产品编号"
             width="180">
           </el-table-column>
           <el-table-column
-            prop="name"
-            label="名称"
+            prop="categoryName"
+            label="产品类别"
             width="180">
           </el-table-column>
           <el-table-column
-            prop="time"
-            label="租借时间"
+            prop="goodsName"
+            label="产品名称"
             width="180">
           </el-table-column>
           <el-table-column
-            prop="rentCode"
-            label="租赁码">
+            prop="describes"
+            label="产品描述">
           </el-table-column>
           <el-table-column
-            prop="price"
-            label="价格">
-          </el-table-column>
-          <el-table-column
-            prop="remarks"
+            prop="remark"
             label="备注">
           </el-table-column>
         </el-table>
+
       </el-card>
 
     </el-row>
@@ -109,11 +112,6 @@
     data() {
       return {
         show: true,
-        //输入框的值
-        inputValue: '',
-        //输入框状态
-        inputStatus: {},
-        rentHumanId: '张三',
         tableData: [],
         userInfo:{
           cardId:'',
@@ -121,7 +119,12 @@
           balance:'',
           level:''
         },
-        cost:''
+        cost:0,//归还费用
+        //输入框内的码
+        QScode:'',
+        //租赁是true
+        //归还时false
+        rentOrReturnState:true
       }
     },
     methods: {
@@ -141,9 +144,79 @@
       getSystem(){
         this.$router.push("/workBeach");
       },
-      doLogin(){
-        console.log(this.inputValue);
-        this.inputValue='';
+      //扫码ing
+      search(){
+        //会员卡的卡号位数是10位
+        if (this.QScode.length === 10){
+          //用户刷卡，当前会员信息置空
+          this.userInfo.cardId = '';
+          this.userInfo.name = '';
+          this.userInfo.balance = '';
+          this.userInfo.level = '';
+          //租赁表置空
+          this.tableData = [];
+          this.$http.post('http://lease.loverqi.cn:8080/lease/leasemain/userstart.action',{
+            cardId:this.QScode
+          }).then((response)=>{
+            let body = response.data
+            if (body.code === 0 ){
+              this.userInfo = body.data;//用户信息赋值userinfo对象
+            }
+          },(error)=>{});
+          //扫码框置空
+          this.QScode = ''
+          //表格置空
+          this.tableData = []
+          //支付费用清空
+          this.cost = 0
+          this.rentOrReturnState = true;
+        } else {
+          //物品码
+          //请求租赁
+          this.$http.post('http://lease.loverqi.cn:8080/lease/leasemain/leasegoods.action',{
+            cardId:this.userInfo.cardId, //会员卡ID
+            shopId:sessionStorage.getItem('shopId'),
+            barCode:this.QScode //物品码
+          }).then((response)=>{
+            let body = response.data;
+
+            if (body.data.next === true){
+              //上一个请求是归还，该会员本次租赁结束，清空用户信息 这里不对，当前还是应该显示，
+              this.userInfo.cardId = '';
+              this.userInfo.name = '';
+              this.userInfo.balance = '';
+              this.userInfo.level = '';
+              //输入框归0
+              this.QScode = '';
+              //租借表清空
+              this.tableData = [];
+              this.rentOrReturnState = false;//状态置为归还
+            } else {
+              this.rentOrReturnState = true;//状态置为租赁
+              //上一个请求是租赁，把刚才的租赁商品 添加 进租赁表
+              this.getGoodsInfo(this.QScode);
+
+            }
+            //是否是归还物品
+            if (body.data.ifAlso === true){
+              this.cost = body.data.cost;
+            }
+          },(error)=>{});
+        }
+      },
+      //查询
+      //todo 异步，要等待
+      getGoodsInfo(qscode){
+        this.$http.post('http://lease.loverqi.cn:8080/lease/goods/find.action',{
+          bar:qscode
+        }).then((response)=>{
+          let body = response.data
+          if (body.code === 0 ){
+            this.tableData.push(body.data[0]);
+            this.QScode = ''
+          }
+        },(error)=>{});
+
       }
 
     },
@@ -151,56 +224,6 @@
     mounted() {
       //输入框获取焦点
       document.querySelector(".app-rent-content-input input").focus();
-      console.log(sessionStorage.getItem('token'));
-    },
-    watch: {
-      inputValue: function (value) {
-        //租赁前用户信息请求
-        this.$http.post('/lease/leasemain/userstart.action',{
-          cardId:value
-        }).then((response)=>{
-          let body = response.data
-          if (body.code === 0 ){
-            this.userInfo = body.data;//用户信息赋值
-            this.$message({
-              type: 'success',
-              message: body.message
-            });
-          } else {
-            this.$message({
-              type: 'error',
-              message: body.message
-            });
-          }
-        },(error)=>{});
-        //请求租赁/租赁结束
-        this.$http.post('/lease/leasemain/leasegoods.action',{
-          cardId:this.userInfo.cardId,
-          shopId:'',
-          barCode:value
-        }).then((response)=>{
-          let body = response.data
-          if (body.code === 0 ){
-            this.$message({
-              type: 'success',
-              message: body.message
-            });
-          } else {
-            this.$message({
-              type: 'error',
-              message: body.message
-            });
-          }
-          //下一步要进行的操作
-          if (body.data.next){
-            this.userInfo = {}//删除当前用户信息
-          }
-          //是否是归还物品
-          if (body.data.ifAlso){
-            this.cost = body.data.cost
-          }
-        },(error)=>{});
-      }
     },
     components: {ElCol, ElRow}
   }

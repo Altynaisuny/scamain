@@ -5,7 +5,7 @@
         <el-input v-model="categoryName" placeholder="请输入产品类别名称"></el-input>
       </el-col>
       <el-col :span="3">
-        <el-select v-model="state" placeholder="当前查询类别" @change="change">
+        <el-select v-model="state" placeholder="订单状态" @change="change">
           <el-option
             v-for="item in options"
             :key="item.value"
@@ -48,67 +48,36 @@
         stripe
         style="width: 100%">
         <el-table-column
-          prop="id"
-          label="订单号">
+          prop="count"
+          label="查询到的笔数">
         </el-table-column>
         <el-table-column
-          prop="goodsName"
-          label="商品名称">
+          prop="income"
+          label="实际总收入金额">
         </el-table-column>
         <el-table-column
-          prop="state"
-          label="订单状态">
+          prop="consumption"
+          label="会员的消费金额">
         </el-table-column>
         <el-table-column
-          prop="cardId"
-          label="IC卡号码">
+          prop="arrears"
+          label="会员的欠款金额">
         </el-table-column>
-        <el-table-column
-          prop="name"
-          label="昵称">
-        </el-table-column>
-        <el-table-column
-          prop="startTime"
-          label="租赁开始时间">
-        </el-table-column>
-        <el-table-column
-          prop="endTime"
-          label="租赁结束时间">
-        </el-table-column>
-        <el-table-column
-          prop="consuming"
-          label="总耗时">
-        </el-table-column>
-        <el-table-column
-          prop="cost"
-          label="总费用">
-        </el-table-column>
-        <el-table-column
-          prop="borrowName"
-          label="租借店铺">
-        </el-table-column>
-        <el-table-column
-          prop="alsoName"
-          label="结束租赁店铺">
-        </el-table-column>
-        <el-table-column
-          prop="remark"
-          label="备注">
-        </el-table-column>
+
       </el-table>
     </el-row>
-    <el-row class="app-info-pagination">
-      <el-col :span="4" :offset="18">
-        <el-pagination
-          layout="prev, pager, next"
-          :page-count="pagination.pageCount"
-          :page-size="pagination.pageSize"
-          :current-page.sync="pagination.currentPage"
-          @current-change="flip"
-        >
-        </el-pagination>
-      </el-col>
-    </el-row>
+    <!--<el-row class="app-info-pagination">-->
+      <!--<el-col :span="4" :offset="18">-->
+        <!--<el-pagination-->
+          <!--layout="prev, pager, next"-->
+          <!--:page-count="pagination.pageCount"-->
+          <!--:page-size="pagination.pageSize"-->
+          <!--:current-page.sync="pagination.currentPage"-->
+          <!--@current-change="flip"-->
+        <!--&gt;-->
+        <!--</el-pagination>-->
+      <!--</el-col>-->
+    <!--</el-row>-->
 
   </div>
 </template>
@@ -126,7 +95,7 @@
         pagination: {
           pageCount: 1000,
           pageSize: 10,//页面显示条数
-          currentPage: 1//查询页码
+          page: 1//查询页码
         },
         //当前查询的类别
         state: '',
@@ -145,9 +114,7 @@
     methods: {
 
       search() {
-        this.$http.post('http://lease.loverqi.cn:8080/lease/flowing/findFlowing.action', {
-          page: this.pagination.currentPage,
-          pageSize: this.pagination.pageSize,
+        this.$http.post('http://lease.loverqi.cn:8080/lease/flowing/findFlowings.action', {
           categoryName: this.categoryName,
           state: this.state,
           shopId: this.shopId,
@@ -157,22 +124,23 @@
         }).then((response) => {
           let body = response.data
           if (body.code === 0) {
-            this.tableData = body.data
+            this.tableData.splice(0,this.tableData.length)
+            this.tableData.push(body.data)
+            console.log(this.tableData);
           } else {
             this.$message({
               type: 'error',
               message: body.message
             });
           }
-        }, (error) => {
-        });
+        }, (error) => {});
       },
 
       reset() {
+        this.categoryName = ''
         this.state = '';
-        this.goodsId = '';
         this.shopId = '';
-        this.cardId = '';
+        this.goodsId = '';
         this.startTime = '';
         this.endTime = ''
       },
@@ -183,12 +151,10 @@
       },
       change(val) {
         this.state = val;
-      },
-
+      }
     },
     mounted() {
-      //列表初始化查询。
-      this.search();
+
       //下拉框初始化查询
       this.$http.post('http://lease.loverqi.cn:8080/lease/dictionary/find.action', {
         id: '1001'

@@ -80,6 +80,7 @@
           :page-count="pagination.pageCount"
           :page-size="pagination.pageSize"
           :current-page="pagination.currentPage"
+          @current-change="flip"
         >
         </el-pagination>
       </el-col>
@@ -153,7 +154,7 @@
        labelPosition:'left',
        //分页配置
        pagination:{
-         pageCount:100,
+         pageCount:1000,
          pageSize:10,//页面显示条数
          currentPage:1//查询页码
        },
@@ -163,7 +164,7 @@
       //编辑
       handleEdit(index, row){
         this.form.goodsId = row.goodsId;
-        this.form.goodsName = row.goodsName;
+        this.form.goodsName = row.goodsName;//todo 查询出来是name，修改提交是id
         this.form.categoryId = row.categoryId;
         this.form.describes = row.describes;
         this.form.remark = row.remark;
@@ -178,7 +179,7 @@
           type: 'warning'
         }).then(() => {
           //此处发送请求
-          this.$http.post('/lease/goods/delete.action',{
+          this.$http.post('http://lease.loverqi.cn:8080/lease/goods/delete.action',{
             goodsId:goodsId
           }).then((response)=>{
             let body = response.data
@@ -203,7 +204,7 @@
         });
       },
       search(){
-        this.$http.post('/lease/goods/find.action',{
+        this.$http.post('http://lease.loverqi.cn:8080/lease/goods/find.action',{
           page:this.pagination.currentPage,
           pageSize:this.pagination.pageSize,
           categoryName:this.inputCategoryName,
@@ -240,7 +241,7 @@
         }).then(() => {
           this.dialogFormVisible = false;
           //此处发送请求
-          this.$http.post('/lease/goods/update.action',{
+          this.$http.post('http://lease.loverqi.cn:8080/lease/goods/update.action',{
             categoryId:this.form.categoryId,
             goodsId:this.form.goodsId,
             goodsName:this.form.goodsName,
@@ -269,6 +270,12 @@
           });
         });
 
+      },
+
+
+      flip(val){
+        this.pagination.currentPage = val
+        this.search();
       }
     },
     mounted(){

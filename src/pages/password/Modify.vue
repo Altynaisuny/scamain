@@ -3,14 +3,14 @@
     <el-row>
       <el-col :span="8" :offset="8">
         <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px">
-          <el-form-item label="账户" prop="username" :rules="[{ required: true, message: '不能为空'}]">
-            <el-input type="text" v-model="ruleForm.username" auto-complete="off"></el-input>
-          </el-form-item>
           <el-form-item label="原密码" prop="password" :rules="[{ required: true, message: '不能为空'}]">
             <el-input type="password" v-model="ruleForm.password" auto-complete="off"></el-input>
           </el-form-item>
           <el-form-item label="新密码" prop="newPassword" :rules="[{ required: true, message: '不能为空'}]">
             <el-input type="password" v-model="ruleForm.newPassword"></el-input>
+          </el-form-item>
+          <el-form-item label="确认密码" prop="checkPassword" :rules="[{ required: true, message: '不能为空'}]">
+            <el-input type="password" v-model="ruleForm.checkPassword"></el-input>
           </el-form-item>
           <el-form-item>
             <el-button type="primary" @click="submitForm('ruleForm')">提交</el-button>
@@ -32,11 +32,12 @@
       ElRow
     },
     data() {
+
       return {
         ruleForm: {
-          username: '',
           password: '',
-          newPassword: ''
+          newPassword: '',
+          checkPassword:''
         },
         rules: {},
 
@@ -48,12 +49,18 @@
         this.$refs[formName].validate((valid) => {
           if (valid) {
             validStatus = true;
+            if(this.ruleForm.newPassword !== this.ruleForm.checkPassword){
+              this.$message({
+                type: 'error',
+                message: "两次输入密码不一致!"
+              });
+            }
           }
         });
         //校验成功
         if (validStatus) {
-          this.$http.post('/lease/woker/updatePwd.action', {
-            username: this.ruleForm.username,
+          this.$http.post('http://lease.loverqi.cn:8080/lease/woker/updatePwd.action', {
+            username: sessionStorage.getItem('username'),
             password: this.ruleForm.password,
             newPassword: this.ruleForm.newPassword
           }).then((response) => {
@@ -82,20 +89,7 @@
       }
     },
     mounted(){
-      this.$http.post('/lease/woker/userstart.action',{
-        shopId:this.inputshopId,
-        username:this.inputusername
-      }).then((response)=>{
-        let body = response.data
-        if (body.code === 0 ){
-          this.tableData = body.data
-        } else {
-          this.$message({
-            type: 'error',
-            message: body.message
-          });
-        }
-      },(error)=>{});
+
     }
   }
 </script>

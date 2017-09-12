@@ -10,10 +10,10 @@
         :label-position="labelPosition"
       >
         <el-form-item label="账号" prop="user">
-          <el-input type="text" v-model="userInfo.user"></el-input>
+          <el-input type="text" v-model="userInfo.user" auto-complete="off"></el-input>
         </el-form-item>
         <el-form-item label="密码" prop="pass">
-          <el-input type="password" v-model="userInfo.pass" auto-complete="off"></el-input>
+          <el-input type="password" v-model="userInfo.pass" auto-complete="new-password"></el-input>
         </el-form-item>
 
         <el-form-item>
@@ -67,7 +67,8 @@
             {validator: checkUser, trigger: 'blur'}
           ]
         },
-        loginStatus: false
+        loginStatus: false,
+        isSystem:false
       };
     },
     methods: {
@@ -82,12 +83,11 @@
         let status = false ;
         //校验成功
         if (validStatus) {
-          this.$http.post('/lease/woker/login.action', {
+          this.$http.post('http://lease.loverqi.cn:8080/lease/woker/login.action', {
             username: this.userInfo.user,
             password: this.userInfo.pass
           }).then( (response)=> {
             let body = response.data;
-            console.log(response);
             if (body.code === 0) {
               this.$store.dispatch('setToken',body.token);
 
@@ -95,12 +95,18 @@
 
               this.$store.dispatch('setShopId', body.data.shopId);
 
+              this.$store.dispatch('setUsername', this.userInfo.user);
+
               this.$message({
-                message: '恭喜你，登录成功',
+                message: body.message,
                 type: 'success'
               });
-              //进入租赁界面
-              this.$router.push("/rent");
+              if (body.data.isSystem === true){
+                this.$router.push("/workBeach");//管理员没有租赁中心，直接跳转到工作空间平台
+              } else {
+                //进入租赁界面
+                this.$router.push("/rent");//普通员工，租赁中心
+              }
               return true
             } else {
               this.$message.error(body.message);
@@ -123,9 +129,41 @@
       loginStatus: function (val) {
 
       }
+    },
+    mounted(){
+      //超级管理员是没有租赁的权限的
+      if (sessionStorage.getItem('isSystem') === 'true' ){
+          this.isSystem = true;
+      }
     }
   }
 </script>
 <style lang="less" scoped>
-  @import "login.less";
+  #app-login{
+    position: relative;
+    background-image: url("./app-background.jpg");
+    z-index: 1000;
+    width: 100%;
+    height: 100%;
+
+  .app-login-header{
+    width: 150px;
+    height: auto;
+    margin: 0 auto;
+  img{
+    max-width: 150px;
+    height: auto;
+  }
+  }
+
+  .app-login-content{
+    width: 400px;
+    height: 200px;
+    position: fixed;
+    top:50%;
+    left: 50%;
+    transform:translate(-50%,-50%);
+    z-index: 2000;
+  }
+  }
 </style>

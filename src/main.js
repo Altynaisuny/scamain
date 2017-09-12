@@ -14,7 +14,9 @@ Vue.config.devtools = true;
 const instance = axios.create({
   timeout:'5000',
   headers:{'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8'},
-  // baseURL: 'http://lease.loverqi.cn:8080',
+  // baseURL: '',
+  // 用于设置跨域请求代理
+  // proxy: { host: "http://lease.loverqi.cn:8080", port: 8080,}
 });
 
 //POST传参序列化(添加请求拦截器)
@@ -33,6 +35,7 @@ instance.interceptors.request.use(
     if (sessionStorage.token){
       config.headers['token'] = sessionStorage.token;
     }
+    console.log(config);
     return config;
   },
   error => {}

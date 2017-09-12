@@ -3,7 +3,6 @@ import error from '../pages/error/404.vue'
 import login from '../pages/login/login.vue'
 import rentInfo from '../pages/rentInfo/rentInfo.vue'
 import register from '../pages/register/goodsRegister.vue'
-import blackList from '../pages/blackList/blackList.vue'
 import workBench from '../pages/workBeach.vue'
 import goodsInfo from '../pages/goodsInfo/goodsInfo.vue'
 import charging from '../pages/charging/charging.vue'
@@ -13,6 +12,7 @@ import userManage from '../pages/userManage/userManage.vue'
 import category from '../pages/register/category.vue'
 import recharge from '../pages/transaction/recharge.vue'
 import cashFlow from '../pages/transaction/cashFlow.vue'
+import cashFlowAll from '../pages/transaction/cashFlowAll.vue'
 import modifyPassword from '../pages/password/Modify.vue'
 import user from '../pages/user/user.vue'
 
@@ -50,10 +50,6 @@ export default [
         component:register
       },
       {
-        path:'blackList',
-        component:blackList
-      },
-      {
         path:'charging',
         component:charging
       },
@@ -80,6 +76,10 @@ export default [
       {
         path:'cashFlow',
         component:cashFlow
+      },
+      {
+        path:'cashFlowAll',
+        component:cashFlowAll
       },
       {
         path:'modifyPassword',

@@ -2,7 +2,7 @@
   <div id="app-recharge">
     <el-row>
       <el-col :span="6" :offset="9">
-        <el-input v-model="cardId" placeholder="请读卡" autofocus>
+        <el-input v-model="cardId" placeholder="请读卡" autofocus @keyup.enter.native="search">
           <template slot="prepend">会员卡号：</template>
         </el-input>
       </el-col>
@@ -56,9 +56,30 @@
             label="昵称"
             prop="name">
           </el-table-column>
+          <el-table-column
+            label="操作">
+            <template scope="scope">
+              <el-button type="primary" icon="check" @click="handleSelect(scope.$index, scope.row)">选定</el-button>
+            </template>
+          </el-table-column>
         </el-table>
       </el-col>
 
+    </el-row>
+    <el-row style="margin-top: 20px;">
+      <el-col :span="3" :offset="9">
+        已选用户信息
+      </el-col>
+    </el-row>
+    <el-row>
+      <el-col :span="3" :offset="9">
+        IC卡号码：{{vipObj.cardId}}
+      </el-col>
+    </el-row>
+    <el-row>
+      <el-col :span="3" :offset="9">
+        姓名:{{vipObj.name}}
+      </el-col>
     </el-row>
     <el-row style="margin-top: 30px;">
       <el-col :span="6" :offset="9">
@@ -68,7 +89,7 @@
     </el-row>
     <el-row style="margin-top: 20px;">
       <el-col :spna="2" :offset="9">
-        <el-tag type="primary">余额：￥{{tableData.balance}}元</el-tag>
+        <el-tag type="primary">余额：￥{{vipObj.nowBalance}}元</el-tag>
       </el-col>
     </el-row>
     <el-row style="margin-top: 30px;">
@@ -100,7 +121,7 @@
       return{
         //会员卡账号
         cardId:'',
-        //金额
+        //充值金额
         balance:'',
         moneyList: [
           { "value": "20"},
@@ -116,9 +137,15 @@
         ],
         state:'0',
         name:'',
+        //充值还是修改
         inputState:'用户充值',
-        cost:'',
-        tableData: []
+        tableData: [],
+        //选定待充值的会员信息
+        vipObj:{
+          cardId:'',
+          name:'',
+          nowBalance:''
+        }
       }
     },
     components: {
@@ -141,8 +168,8 @@
         this.balance = item.value
       },
       submit(){
-        this.$http.post('/lease/user/recharge.action',{
-          cardId:this.cardId,
+        this.$http.post('http://lease.loverqi.cn:8080/lease/user/recharge.action',{
+          cardId:this.vipObj.cardId,
           balance:this.balance,
           state:this.state
         }).then((response)=>{
@@ -159,6 +186,11 @@
             });
           }
         },(error)=>{});
+        //发送完请求，会员卡置空
+        this.cardId = '';
+        this.name = '';
+        this.tableData = [];
+        this.nowBalance = '';
       },
       reset(){
         this.name='';
@@ -167,7 +199,7 @@
       //查询用户信息
       search(){
         if (this.name !=='' || this.cardId !== ''){
-          this.$http.post('/lease/user/find.action',{
+          this.$http.post('http://lease.loverqi.cn:8080/lease/user/find.action',{
             cardId:this.cardId,
             name:this.name
           }).then((response)=>{
@@ -184,6 +216,12 @@
         } else {
           this.tableData = [];
         }
+
+      },
+      handleSelect(index,row){
+        this.vipObj.name =row.name;
+        this.vipObj.cardId = row.cardId;
+        this.vipObj.nowBalance = row.balance
       }
     },
     watch:{
