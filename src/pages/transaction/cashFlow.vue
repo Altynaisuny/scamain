@@ -26,7 +26,9 @@
         <el-date-picker
           v-model="startTime"
           type="datetime"
-          placeholder="选择开始时间">
+          placeholder="选择开始时间"
+          @change="getStartTime"
+        >
         </el-date-picker>
       </el-col>
       </el-col>
@@ -34,7 +36,8 @@
         <el-date-picker
           v-model="endTime"
           type="datetime"
-          placeholder="选择结束日期">
+          @change="getEndTime"
+          placeholder="选择结束时间">
         </el-date-picker>
       </el-col>
       <el-col :span="3">
@@ -68,28 +71,16 @@
           label="昵称">
         </el-table-column>
         <el-table-column
-          prop="startTime"
-          label="租赁开始时间">
-        </el-table-column>
-        <el-table-column
-          prop="endTime"
-          label="租赁结束时间">
-        </el-table-column>
-        <el-table-column
-          prop="consuming"
-          label="总耗时">
+          prop="time"
+          label="租赁时间">
         </el-table-column>
         <el-table-column
           prop="cost"
           label="总费用">
         </el-table-column>
         <el-table-column
-          prop="borrowName"
-          label="租借店铺">
-        </el-table-column>
-        <el-table-column
-          prop="alsoName"
-          label="结束租赁店铺">
+          prop="shopName"
+          label="收款店铺">
         </el-table-column>
         <el-table-column
           prop="remark"
@@ -184,7 +175,13 @@
       change(val) {
         this.state = val;
       },
+      getStartTime(val) {
+        this.startTime = val;
+      },
 
+      getEndTime(val) {
+        this.endTime = val;
+      },
     },
     mounted() {
       //列表初始化查询。
