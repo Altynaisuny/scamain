@@ -13,7 +13,12 @@
           <el-input type="text" v-model="userInfo.user" auto-complete="off"></el-input>
         </el-form-item>
         <el-form-item label="密码" prop="pass">
-          <el-input type="password" v-model="userInfo.pass" auto-complete="new-password"></el-input>
+          <el-input
+            type="password"
+            v-model="userInfo.pass"
+            auto-complete="new-password"
+            @keyup.enter.native="submitForm('userInfo')"
+          ></el-input>
         </el-form-item>
 
         <el-form-item>

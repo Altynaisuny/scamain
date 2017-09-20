@@ -179,27 +179,28 @@
             barCode:this.QScode //物品码
           }).then((response)=>{
             let body = response.data;
+            if (body.code === 0){
+              //上一个请求是归还，该会员本次租赁结束，清空用户信息
+              if (body.data.next === true){
+                this.userInfo.cardId = '';
+                this.userInfo.name = '';
+                this.userInfo.balance = '';
+                this.userInfo.level = '';
+                //输入框归0
+                this.QScode = '';
+                //租借表清空
+                this.tableData = [];
+                this.rentOrReturnState = false;//状态置为归还
+              } else {
+                //上一个请求是租赁，把刚才的租赁商品 添加 进租赁表
+                this.rentOrReturnState = true;//状态置为租赁
 
-            if (body.data.next === true){
-              //上一个请求是归还，该会员本次租赁结束，清空用户信息 这里不对，当前还是应该显示，
-              this.userInfo.cardId = '';
-              this.userInfo.name = '';
-              this.userInfo.balance = '';
-              this.userInfo.level = '';
-              //输入框归0
-              this.QScode = '';
-              //租借表清空
-              this.tableData = [];
-              this.rentOrReturnState = false;//状态置为归还
-            } else {
-              this.rentOrReturnState = true;//状态置为租赁
-              //上一个请求是租赁，把刚才的租赁商品 添加 进租赁表
-              this.getGoodsInfo(this.QScode);
-
-            }
-            //是否是归还物品
-            if (body.data.ifAlso === true){
-              this.cost = body.data.cost;
+                this.getGoodsInfo(this.QScode);
+              }
+              //是否是归还物品
+              if (body.data.ifAlso === true){
+                this.cost = body.data.cost;
+              }
             }
           },(error)=>{});
         }
@@ -210,17 +211,24 @@
         this.$http.post('http://lease.loverqi.cn:8080/lease/goods/find.action',{
           bar:qscode
         }).then((response)=>{
-          let body = response.data
+          let body = response.data;
+          //商品存在
           if (body.code === 0 ){
             this.tableData.push(body.data[0]);
             this.QScode = ''
+          }else{
+            //商品不存在
+            this.QScode = '';
+            this.$message({
+              type: 'error',
+              message: "商品不存在"
+            });
           }
         },(error)=>{});
 
       }
 
     },
-    computed: {},
     mounted() {
       //输入框获取焦点
       document.querySelector(".app-rent-content-input input").focus();

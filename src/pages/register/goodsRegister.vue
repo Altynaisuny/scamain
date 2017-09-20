@@ -87,7 +87,7 @@
             } else {
               this.$message({
                 type: 'error',
-                message: body.message
+                message: "该商品已注册或者参数不对！"
               });
             }
           },(error)=>{});
