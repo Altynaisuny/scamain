@@ -29,7 +29,6 @@
           placeholder="选择开始时间">
         </el-date-picker>
       </el-col>
-      </el-col>
       <el-col :span="4">
         <el-date-picker
           v-model="endTime"
@@ -93,7 +92,7 @@
         tableData: [],
         //分页配置
         pagination: {
-          pageCount: 1000,
+          pageCount: 0,
           pageSize: 10,//页面显示条数
           page: 1//查询页码
         },
@@ -143,6 +142,8 @@
         this.goodsId = '';
         this.startTime = '';
         this.endTime = ''
+        //表格清空
+        this.tableData = [];
       },
 
       flip(val) {

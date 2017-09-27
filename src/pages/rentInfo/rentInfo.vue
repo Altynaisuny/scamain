@@ -31,7 +31,6 @@
         >
         </el-date-picker>
       </el-col>
-      </el-col>
       <el-col :span="4">
         <el-date-picker
           v-model="endTime"
@@ -60,10 +59,6 @@
           label="商品名称">
         </el-table-column>
         <el-table-column
-          prop="state"
-          label="订单状态">
-        </el-table-column>
-        <el-table-column
           prop="cardId"
           label="用户IC">
         </el-table-column>
@@ -72,28 +67,36 @@
           label="昵称">
         </el-table-column>
         <el-table-column
+          prop="phone"
+          label="联系方式">
+        </el-table-column>
+        <el-table-column
           prop="startTime"
-          label="租赁时间">
+          label="租赁时间"
+          width="110"
+        >
         </el-table-column>
         <el-table-column
           prop="endTime"
-          label="结束租赁时间">
+          label="归还时间"
+          width="110"
+        >
         </el-table-column>
         <el-table-column
           prop="consuming"
-          label="租赁的总耗时">
+          label="耗时">
         </el-table-column>
         <el-table-column
           prop="cost"
-          label="租赁的总费用">
+          label="费用">
         </el-table-column>
         <el-table-column
           prop="borrowName"
-          label="租借的店铺">
+          label="租借店铺">
         </el-table-column>
         <el-table-column
           prop="alsoName"
-          label="结束租赁的店铺">
+          label="归还店铺">
         </el-table-column>
         <el-table-column
           prop="remark"
@@ -130,7 +133,7 @@
         tableData: [],
         //分页配置
         pagination:{
-          pageCount:1000,
+          pageCount:0,
           pageSize:10,//页面显示条数
           currentPage:1//查询页码
         },
@@ -159,9 +162,9 @@
           endTime:this.endTime
         }).then((response)=>{
           let body = response.data
-          console.log(response);
           if (body.code === 0 ){
-            this.tableData = body.data
+            this.tableData = body.data.body;
+            this.pagination.pageCount = body.data.count % 10 === 0 ? body.data.count/10 : Math.ceil(body.data.count/10);
           } else {
             this.$message({
               type: 'error',

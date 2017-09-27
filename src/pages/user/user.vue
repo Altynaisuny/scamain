@@ -75,7 +75,6 @@
             prop="remark"
             label="备注"
           ></el-table-column>
-          </el-table-column>
           <el-table-column
             fixed="right"
             label="操作"
@@ -119,7 +118,6 @@
         </el-form-item>
         <el-form-item label="备注" :label-width="EditFormLabelWidth">
           <el-input v-model="formEdit.remark" auto-complete="off"></el-input>
-        </el-form-item>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -202,7 +200,7 @@
         labelPosition: 'left',
         //分页配置
         pagination: {
-          pageCount: 1000,
+          pageCount: 0,
           pageSize: 10,//页面显示条数
           currentPage: 1//查询页码
         },
@@ -237,7 +235,8 @@
         }).then((response) => {
           let body = response.data
           if (body.code === 0) {
-            this.tableData = body.data
+            this.tableData = body.data.body
+	          this.pagination.pageCount = body.data.count % 10 === 0 ? body.data.count/10 : Math.ceil(body.data.count/10);
           } else {
             this.$message({
               type: 'error',

@@ -34,7 +34,6 @@
           prop="consumption"
           label="最低消费(元)">
         </el-table-column>
-        </el-table-column>
         <el-table-column
           label="操作">
           <template scope="scope">
@@ -81,7 +80,6 @@
             </el-form-item>
             <el-form-item label="最低消费" :label-width="formLabelWidth" :rules="[{ required: true, message: '不能为空'}]">
               <el-input v-model="formNew.consumption" auto-complete="off"></el-input>
-            </el-form-item>
             </el-form-item>
           </el-form>
         </div>

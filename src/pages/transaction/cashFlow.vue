@@ -31,7 +31,6 @@
         >
         </el-date-picker>
       </el-col>
-      </el-col>
       <el-col :span="4">
         <el-date-picker
           v-model="endTime"
@@ -115,7 +114,7 @@
         tableData: [],
         //分页配置
         pagination: {
-          pageCount: 1000,
+          pageCount: 0,
           pageSize: 10,//页面显示条数
           currentPage: 1//查询页码
         },
@@ -146,9 +145,10 @@
           startTime: this.startTime,
           endTime: this.endTime
         }).then((response) => {
-          let body = response.data
+          let body = response.data;
           if (body.code === 0) {
-            this.tableData = body.data
+            this.tableData = body.data.body
+	          this.pagination.pageCount = body.data.count % 10 === 0 ? body.data.count/10 : Math.ceil(body.data.count/10);
           } else {
             this.$message({
               type: 'error',

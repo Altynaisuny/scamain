@@ -101,6 +101,7 @@
       </el-card>
 
     </el-row>
+
   </div>
 </template>
 <script>
@@ -158,17 +159,17 @@
           this.$http.post('http://lease.loverqi.cn:8080/lease/leasemain/userstart.action',{
             cardId:this.QScode
           }).then((response)=>{
-            let body = response.data
+            let body = response.data;
             if (body.code === 0 ){
               this.userInfo = body.data;//用户信息赋值userinfo对象
             }
           },(error)=>{});
           //扫码框置空
-          this.QScode = ''
+          this.QScode = '';
           //表格置空
-          this.tableData = []
+          this.tableData = [];
           //支付费用清空
-          this.cost = 0
+          this.cost = 0;
           this.rentOrReturnState = true;
         } else {
           //物品码
@@ -180,29 +181,34 @@
           }).then((response)=>{
             let body = response.data;
             if (body.code === 0){
-              //上一个请求是归还，该会员本次租赁结束，清空用户信息
+              //上一个请求是归还，该会员本次租赁结束，
               if (body.data.next === true){
+                //清空会员信息
                 this.userInfo.cardId = '';
                 this.userInfo.name = '';
                 this.userInfo.balance = '';
                 this.userInfo.level = '';
-                //输入框归0
-                this.QScode = '';
                 //租借表清空
                 this.tableData = [];
                 this.rentOrReturnState = false;//状态置为归还
-              } else {
-                //上一个请求是租赁，把刚才的租赁商品 添加 进租赁表
-                this.rentOrReturnState = true;//状态置为租赁
-
-                this.getGoodsInfo(this.QScode);
               }
-              //是否是归还物品
               if (body.data.ifAlso === true){
+                //归还  显示金额
                 this.cost = body.data.cost;
+              } else {
+                //租赁  添加租赁列表
+                this.rentOrReturnState = true;//状态置为租赁
+                this.getGoodsInfo(body.data.barCode);//查询
               }
+            } else {
+	            this.$notify.error({
+		            title: '错误',
+		            message: body.message
+	            });
             }
           },(error)=>{});
+          //扫码框置空
+          this.QScode = '';
         }
       },
       //查询
@@ -213,16 +219,16 @@
         }).then((response)=>{
           let body = response.data;
           //商品存在
+	        console.log(response);
           if (body.code === 0 ){
-            this.tableData.push(body.data[0]);
+            this.tableData.push(body.data.body[0]);
             this.QScode = ''
           }else{
-            //商品不存在
-            this.QScode = '';
-            this.$message({
-              type: 'error',
-              message: "商品不存在"
-            });
+	          this.$notify({
+		          title: '警告',
+		          message: body.message,
+		          type: 'warning'
+	          });
           }
         },(error)=>{});
 
@@ -236,5 +242,3 @@
     components: {ElCol, ElRow}
   }
 </script>
-<style lang="less" scoped>
-</style>

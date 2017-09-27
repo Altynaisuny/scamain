@@ -88,7 +88,7 @@
       </el-col>
     </el-row>
     <el-row style="margin-top: 20px;">
-      <el-col :spna="2" :offset="9">
+      <el-col :span="2" :offset="9">
         <el-tag type="primary">余额：￥{{vipObj.nowBalance}}元</el-tag>
       </el-col>
     </el-row>

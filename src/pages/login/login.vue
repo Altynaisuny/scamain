@@ -85,7 +85,7 @@
             validStatus = true;
           }
         });
-        let status = false ;
+//        let status = false ;
         //校验成功
         if (validStatus) {
           this.$http.post('http://lease.loverqi.cn:8080/lease/woker/login.action', {
@@ -129,11 +129,6 @@
         this.$refs[forName].resetFields();
       }
 
-    },
-    watch: {
-      loginStatus: function (val) {
-
-      }
     },
     mounted(){
       //超级管理员是没有租赁的权限的
