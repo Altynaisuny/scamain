@@ -2,11 +2,11 @@
   <div id="app-goodsRegister">
     <el-row>
       <el-col :span="6" :offset="9">
-        <el-form ref="form" :rules="rule" :model="form" label-width="80px">
-          <el-form-item label="名称" :rules="[{ required: true, message: '不能为空'}]">
+        <el-form ref="form"  :model="form" label-width="80px">
+          <el-form-item label="名称" :rules="[{ required: true, message: '不能为空'}]" prop="goodsName">
             <el-input v-model="form.goodsName"></el-input>
           </el-form-item>
-          <el-form-item label="商品类别" :rules="[{ required: true, message: '不能为空'}]">
+          <el-form-item label="商品类别" :rules="[{ required: true, message: '不能为空'}]" prop="categoryId">
             <el-select v-model="form.categoryId" placeholder="请选择物品种类" @change="change">
               <el-option
                 v-for="item in options"
@@ -18,14 +18,14 @@
               </el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="条码" :rules="[{ required: true, message: '不能为空'}]">
+          <el-form-item label="条码" :rules="[{ required: true, message: '不能为空'}]" prop="bar">
             <el-input v-model="form.bar"></el-input>
           </el-form-item>
-          <el-form-item label="描述">
+          <el-form-item label="描述" prop="describe">
             <el-input v-model="form.describe"></el-input>
           </el-form-item>
 
-          <el-form-item label="备注">
+          <el-form-item label="备注" prop="remark">
             <el-input v-model="form.remark"></el-input>
           </el-form-item>
 
@@ -66,9 +66,10 @@
         this.$refs[formName].validate((valid) => {
           if (valid) {
             submitState = true;//校验通过
+          } else {
+          	return false;
           }
         });
-        //todo 表单校验有问题，需要处理
         if (submitState){
           //发送
           this.$http.post('http://lease.loverqi.cn:8080/lease/goods/update.action',{
@@ -82,7 +83,7 @@
             if (body.code === 0 ){
               this.$message({
                 type: 'success',
-                message: body.message+",新产品录,ID:"+body.data.goodsId
+                message: body.message+",新产品录入,ID:"+body.data.goodsId
               });
             } else {
               this.$message({
@@ -91,6 +92,7 @@
               });
             }
           },(error)=>{});
+          this.resetForm('form');
         }
       },
       resetForm(forName) {
@@ -110,7 +112,7 @@
       }).then((response)=>{
         let body = response.data;
         if (body.code === 0 ){
-          this.options = body.data;
+          this.options = body.data.body;
         } else {
           this.$message({
             type: 'error',
