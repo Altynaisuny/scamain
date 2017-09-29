@@ -205,7 +205,7 @@
           }).then((response)=>{
             let body = response.data
             if (body.code === 0 ){
-              this.tableData = body.data
+              this.tableData = body.data.body
             } else {
               this.$message({
                 type: 'error',
