@@ -59,7 +59,7 @@
         });
         //校验成功
         if (validStatus) {
-          this.$http.post('http://lease.loverqi.cn:8080/lease/woker/updatePwd.action', {
+          this.$http.post('/lease/woker/updatePwd.action', {
             username: sessionStorage.getItem('username'),
             password: this.ruleForm.password,
             newPassword: this.ruleForm.newPassword

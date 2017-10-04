@@ -134,7 +134,7 @@
 
       },
       logout(){
-        this.$http.post('http://lease.loverqi.cn:8080/lease/woker/unlogin.action',{
+        this.$http.post('/lease/woker/unlogin.action',{
           token:sessionStorage.getItem('token')
         }).then((response)=>{
           let body = response.data

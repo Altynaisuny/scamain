@@ -1,12 +1,13 @@
 {
   "name": "scamain",
-  "description": "A Vue.js project",
+  "description": "Vue + element-ui + Vuex project",
   "version": "1.0.0",
   "author": "sunyt <altynai0214@qq.com>",
   "private": true,
   "scripts": {
-    "dev": "cross-env NODE_ENV=development webpack-dev-server --open --hot",
-    "build": "cross-env NODE_ENV=production webpack --progress --hide-modules",
+    "dev": " cross-env NODE_ENV=development webpack-dev-server --open --hot --config ./build/webpack.dev.js",
+    "build": "cross-env NODE_ENV=production webpack --progress --color --hide-modules --config ./build/webpack.prod.js",
+    "start": "webpack-dev-server --open --config ./build/webpack.dev.js",
     "pack": "webpack --progress --color"
   },
   "dependencies": {
@@ -32,9 +33,11 @@
     "less-loader": "^4.0.5",
     "loader-utils": "^1.0.4",
     "style-loader": "^0.18.2",
+    "uglifyjs-webpack-plugin": "^0.4.6",
     "vue-loader": "^12.1.0",
     "vue-template-compiler": "^2.3.3",
     "webpack": "^2.6.1",
-    "webpack-dev-server": "^2.4.5"
+    "webpack-dev-server": "^2.4.5",
+    "webpack-merge": "^4.1.0"
   }
 }

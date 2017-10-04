@@ -115,7 +115,7 @@
     },
     methods:{
       search(){
-        this.$http.post('http://lease.loverqi.cn:8080/lease/grade/find.action',{
+        this.$http.post('/lease/grade/find.action',{
           id:this.id
         }).then((response)=>{
           let body = response.data
@@ -137,7 +137,7 @@
         }).then(() => {
           this.dialogFormVisible = false;
           //此处发送请求
-          this.$http.post('http://lease.loverqi.cn:8080/lease/grade/update.action',{
+          this.$http.post('/lease/grade/update.action',{
             gradeName:this.formNew.gradeName,
             discounts:this.formNew.discounts,
             consumption:this.formNew.consumption
@@ -173,7 +173,7 @@
           type: 'warning'
         }).then(() => {
           //此处发送请求
-          this.$http.post('http://lease.loverqi.cn:8080/lease/grade/delete.action',{
+          this.$http.post('/lease/grade/delete.action',{
             gradeId:gradeId
           }).then((response)=>{
             let body = response.data
@@ -226,7 +226,7 @@
         }).then(() => {
           this.dialogFormVisible = false;
           //此处发送请求
-          this.$http.post('http://lease.loverqi.cn:8080/lease/grade/update.action',{
+          this.$http.post('/lease/grade/update.action',{
             gradeId: this.formEdit.gradeId,
             gradeName:this.formEdit.gradeName,
             discounts:this.formEdit.discounts,

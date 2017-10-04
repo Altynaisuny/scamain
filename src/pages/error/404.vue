@@ -2,7 +2,7 @@
   <div id="app-404">
     <scmainHeader class="app-404-header"></scmainHeader>
     <div class="app-404-content">
-      <img src="./404.gif">
+      <img src="./404.png">
     </div>
   </div>
 </template>

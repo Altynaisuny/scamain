@@ -181,7 +181,7 @@
           type: 'warning'
         }).then(() => {
           //此处发送请求
-          this.$http.post('http://lease.loverqi.cn:8080/lease/woker/delete.action',{
+          this.$http.post('/lease/woker/delete.action',{
             username:username
           }).then((response)=>{
             let body = response.data;
@@ -219,7 +219,7 @@
             cancelButtonText: '取消',
             type: 'warning'
           }).then(() => {
-            this.$http.post('http://lease.loverqi.cn:8080/lease/woker/update.action',{
+            this.$http.post('/lease/woker/update.action',{
               username:this.formNew.username,
               password:this.formNew.password,
               shopId:this.formNew.shopId,
@@ -271,7 +271,7 @@
           type: 'warning'
         }).then(() => {
           this.dialogFormVisible = false;
-          this.$http.post('http://lease.loverqi.cn:8080/lease/woker/update.action',{
+          this.$http.post('/lease/woker/update.action',{
             username: this.formEdit.username,
             password:this.formEdit.password,
             shopId:this.formEdit.shopId,
@@ -303,7 +303,7 @@
       },
 
       search(){
-        this.$http.post('http://lease.loverqi.cn:8080/lease/woker/userstart.action',{
+        this.$http.post('/lease/woker/userstart.action',{
           shopId:this.inputShopId,
           username:this.inputUserName
         }).then((response)=>{
@@ -339,7 +339,7 @@
     },
     mounted(){
       //获取店铺下拉框
-      this.$http.post('http://lease.loverqi.cn:8080/lease/shop/find.action',{
+      this.$http.post('/lease/shop/find.action',{
       }).then((response)=>{
         let body = response.data;
         if (body.code === 0 ){

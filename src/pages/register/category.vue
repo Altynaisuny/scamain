@@ -162,7 +162,7 @@
           type: 'warning'
         }).then(() => {
           //此处发送请求
-          this.$http.post('http://lease.loverqi.cn:8080/lease/category/delete.action',{
+          this.$http.post('/lease/category/delete.action',{
             categoryId:categoryId
           }).then((response)=>{
             let body = response.data
@@ -203,7 +203,7 @@
         }).then(() => {
           this.dialogFormVisible = false;
           //此处发送请求
-          this.$http.post('http://lease.loverqi.cn:8080/lease/category/update.action',{
+          this.$http.post('/lease/category/update.action',{
             categoryId:this.formEdit.categoryId,
             categoryName:this.formEdit.categoryName,
             describes:this.formEdit.describes,
@@ -239,7 +239,7 @@
         }).then(() => {
           this.dialogFormVisible = false;
           //此处发送请求
-          this.$http.post('http://lease.loverqi.cn:8080/lease/category/update.action',{
+          this.$http.post('/lease/category/update.action',{
             categoryName:this.formNew.categoryName,
             describes:this.formNew.describes,
             remark:this.formNew.remark
@@ -262,7 +262,7 @@
       },
       //查询，，有模糊查询字段
       handleIconClick(){
-        this.$http.post('http://lease.loverqi.cn:8080/lease/category/find.action',{
+        this.$http.post('/lease/category/find.action',{
           page:this.pagination.currentPage,
           pageSize:this.pagination.pageSize,
           categoryName:this.inputCategoryName

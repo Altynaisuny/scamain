@@ -113,7 +113,7 @@
     methods: {
 
       search() {
-        this.$http.post('http://lease.loverqi.cn:8080/lease/flowing/findFlowings.action', {
+        this.$http.post('/lease/flowing/findFlowings.action', {
           categoryName: this.categoryName,
           state: this.state,
           shopId: this.shopId,
@@ -157,7 +157,7 @@
     mounted() {
 
       //下拉框初始化查询
-      this.$http.post('http://lease.loverqi.cn:8080/lease/dictionary/find.action', {
+      this.$http.post('/lease/dictionary/find.action', {
         id: '1001'
       }).then((response) => {
         let body = response.data;

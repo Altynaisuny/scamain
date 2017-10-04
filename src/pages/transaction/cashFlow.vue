@@ -135,7 +135,7 @@
     methods: {
 
       search() {
-        this.$http.post('http://lease.loverqi.cn:8080/lease/flowing/findFlowing.action', {
+        this.$http.post('/lease/flowing/findFlowing.action', {
           page: this.pagination.currentPage,
           pageSize: this.pagination.pageSize,
           categoryName: this.categoryName,
@@ -187,7 +187,7 @@
       //列表初始化查询。
       this.search();
       //下拉框初始化查询
-      this.$http.post('http://lease.loverqi.cn:8080/lease/dictionary/find.action', {
+      this.$http.post('/lease/dictionary/find.action', {
         id: '1001'
       }).then((response) => {
         let body = response.data;

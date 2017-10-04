@@ -88,7 +88,7 @@
 //        let status = false ;
         //校验成功
         if (validStatus) {
-          this.$http.post('http://lease.loverqi.cn:8080/lease/woker/login.action', {
+          this.$http.post('/lease/woker/login.action', {
             username: this.userInfo.user,
             password: this.userInfo.pass
           }).then( (response)=> {
@@ -139,31 +139,5 @@
   }
 </script>
 <style lang="less" scoped>
-  #app-login{
-    position: relative;
-    background-image: url("./app-background.jpg");
-    z-index: 1000;
-    width: 100%;
-    height: 100%;
-
-  .app-login-header{
-    width: 150px;
-    height: auto;
-    margin: 0 auto;
-  img{
-    max-width: 150px;
-    height: auto;
-  }
-  }
-
-  .app-login-content{
-    width: 400px;
-    height: 200px;
-    position: fixed;
-    top:50%;
-    left: 50%;
-    transform:translate(-50%,-50%);
-    z-index: 2000;
-  }
-  }
+  @import "./login.less";
 </style>

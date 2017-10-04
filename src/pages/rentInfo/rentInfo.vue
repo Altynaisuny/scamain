@@ -151,7 +151,7 @@
     methods: {
 
       search(){
-        this.$http.post('http://lease.loverqi.cn:8080/lease/flowing/leasegoods.action',{
+        this.$http.post('/lease/flowing/leasegoods.action',{
           page:this.pagination.currentPage,
           pageSize:this.pagination.pageSize,
           state:this.state,
@@ -197,7 +197,7 @@
     },
     mounted() {
       this.search();
-      this.$http.post('http://lease.loverqi.cn:8080/lease/dictionary/find.action',{
+      this.$http.post('/lease/dictionary/find.action',{
         id:'1000'
       }).then((response)=>{
         let body = response.data

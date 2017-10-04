@@ -178,7 +178,7 @@
           type: 'warning'
         }).then(() => {
           //此处发送请求
-          this.$http.post('http://lease.loverqi.cn:8080/lease/goods/delete.action',{
+          this.$http.post('/lease/goods/delete.action',{
             goodsId:goodsId
           }).then((response)=>{
             let body = response.data
@@ -203,7 +203,7 @@
         });
       },
       search(){
-        this.$http.post('http://lease.loverqi.cn:8080/lease/goods/find.action',{
+        this.$http.post('/lease/goods/find.action',{
           page:this.pagination.currentPage,
           pageSize:this.pagination.pageSize,
           categoryName:this.inputCategoryName,
@@ -241,7 +241,7 @@
         }).then(() => {
           this.dialogFormVisible = false;
           //此处发送请求
-          this.$http.post('http://lease.loverqi.cn:8080/lease/goods/update.action',{
+          this.$http.post('/lease/goods/update.action',{
             categoryId:this.form.categoryId,
             goodsId:this.form.goodsId,
             goodsName:this.form.goodsName,

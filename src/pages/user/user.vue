@@ -225,7 +225,7 @@
 
       },
       search() {
-        this.$http.post('http://lease.loverqi.cn:8080/lease/user/find.action', {
+        this.$http.post('/lease/user/find.action', {
           page: this.pagination.currentPage,
           pageSize: this.pagination.pageSize,
           cardId: this.inputcardId,
@@ -263,7 +263,7 @@
         }).then(() => {
           this.dialogFormVisible = false;
           //此处发送请求
-          this.$http.post('http://lease.loverqi.cn:8080/lease/user/update.action', {
+          this.$http.post('/lease/user/update.action', {
             cardId: this.formEdit.cardId,
             name: this.formEdit.name,
             phone: this.formEdit.phone,
@@ -291,7 +291,7 @@
           type: 'warning'
         }).then(() => {
           this.dialogFormVisible = false;
-          this.$http.post('http://lease.loverqi.cn:8080/lease/user/update.action',{
+          this.$http.post('/lease/user/update.action',{
             cardId:this.formNew.cardId,
             name:this.formNew.name,
             phone:this.formNew.phone,
@@ -334,7 +334,7 @@
       }
       //查询会员等级表
       //赋值给下拉框
-      this.$http.post('http://lease.loverqi.cn:8080/lease/grade/find.action',{
+      this.$http.post('/lease/grade/find.action',{
       }).then((response)=>{
         let body = response.data
         if (body.code === 0 ){

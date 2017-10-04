@@ -156,7 +156,7 @@
           this.userInfo.level = '';
           //租赁表置空
           this.tableData = [];
-          this.$http.post('http://lease.loverqi.cn:8080/lease/leasemain/userstart.action',{
+          this.$http.post('/lease/leasemain/userstart.action',{
             cardId:this.QScode
           }).then((response)=>{
             let body = response.data;
@@ -174,7 +174,7 @@
         } else {
           //物品码
           //请求租赁
-          this.$http.post('http://lease.loverqi.cn:8080/lease/leasemain/leasegoods.action',{
+          this.$http.post('/lease/leasemain/leasegoods.action',{
             cardId:this.userInfo.cardId, //会员卡ID
             shopId:sessionStorage.getItem('shopId'),
             barCode:this.QScode //物品码
@@ -214,7 +214,7 @@
       //查询
       //todo 异步，要等待
       getGoodsInfo(qscode){
-        this.$http.post('http://lease.loverqi.cn:8080/lease/goods/find.action',{
+        this.$http.post('/lease/goods/find.action',{
           bar:qscode
         }).then((response)=>{
           let body = response.data;

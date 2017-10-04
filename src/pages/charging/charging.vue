@@ -280,7 +280,7 @@
 				this.formEdit.bar = this.barTemp;
 				this.tableData = [];
 				this.sectionConsumeTableData = [];
-				this.$http.post('http://lease.loverqi.cn:8080/lease/price/find.action', {
+				this.$http.post('/lease/price/find.action', {
 					bar: this.barTemp,
 					shopId: this.shopId
 				}).then((response) => {
@@ -335,7 +335,7 @@
 					cancelButtonText: '取消',
 					type: 'warning'
 				}).then(() => {
-					this.$http.post('http://lease.loverqi.cn:8080/lease/price/delete.action', {
+					this.$http.post('/lease/price/delete.action', {
 						priceId: row.priceId
 					}).then((response) => {
 						let body = response.data
@@ -366,7 +366,7 @@
 					cancelButtonText: '取消',
 					type: 'warning'
 				}).then(() => {
-					this.$http.post('http://lease.loverqi.cn:8080/lease/price/delete.action', {
+					this.$http.post('/lease/price/delete.action', {
 						priceId: row.priceId
 					}).then((response) => {
 						let body = response.data
@@ -398,7 +398,7 @@
 					type: 'warning'
 				}).then(() => {
 					this.dialogFormVisible = false;
-					this.$http.post('http://lease.loverqi.cn:8080/lease/price/update.action', {
+					this.$http.post('/lease/price/update.action', {
 						duration: this.formNew.duration,
 						price: this.formNew.price,
 						shopId: this.shopId,
@@ -443,7 +443,7 @@
 					type: 'warning'
 				}).then(() => {
 					this.dialogFormVisible = false;
-						this.$http.post('http://lease.loverqi.cn:8080/lease/price/update.action', {
+						this.$http.post('/lease/price/update.action', {
 							duration: this.formEdit.duration,
 							price: this.formEdit.price,
 							shopId: this.formEdit.shopId,
@@ -493,7 +493,7 @@
 					//此处发送请求
           if (this.formEdit2.priceId === '') {
             //新增
-	          this.$http.post('http://lease.loverqi.cn:8080/lease/price/update.action', {
+	          this.$http.post('/lease/price/update.action', {
 		          duration: this.formEdit2.duration,
 		          pattern: this.formEdit2.pattern,
 		          price: this.formEdit2.price,
@@ -516,7 +516,7 @@
 	          });
           } else {
             //修改
-	          this.$http.post('http://lease.loverqi.cn:8080/lease/price/update.action', {
+	          this.$http.post('/lease/price/update.action', {
 		          bar:this.barTemp,
 		          duration: this.formEdit2.duration,
 		          pattern: this.formEdit2.pattern,
@@ -560,7 +560,7 @@
 			let systemState = sessionStorage.getItem('isSystem');
 			if (systemState === 'true') {
 				//管理员权限，查询系统所有的店铺信息
-				this.$http.post('http://lease.loverqi.cn:8080/lease/shop/find.action', {}).then((response) => {
+				this.$http.post('/lease/shop/find.action', {}).then((response) => {
 					let body = response.data
 					if (body.code === 0) {
 						this.options = body.data;//给下拉框赋值

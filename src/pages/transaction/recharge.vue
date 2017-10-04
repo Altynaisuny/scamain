@@ -168,7 +168,7 @@
         this.balance = item.value
       },
       submit(){
-        this.$http.post('http://lease.loverqi.cn:8080/lease/user/recharge.action',{
+        this.$http.post('/lease/user/recharge.action',{
           cardId:this.vipObj.cardId,
           balance:this.balance,
           state:this.state
@@ -199,7 +199,7 @@
       //查询用户信息
       search(){
         if (this.name !=='' || this.cardId !== ''){
-          this.$http.post('http://lease.loverqi.cn:8080/lease/user/find.action',{
+          this.$http.post('/lease/user/find.action',{
             cardId:this.cardId,
             name:this.name
           }).then((response)=>{
