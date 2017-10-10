@@ -6,6 +6,7 @@
   "private": true,
   "scripts": {
     "dev": " cross-env NODE_ENV=development webpack-dev-server --open --hot --config ./build/webpack.dev.js",
+    "nwdev": "cross-env NODE_ENV=development webpack-dev-server --open --hot",
     "build": "cross-env NODE_ENV=production webpack --progress --color --hide-modules --config ./build/webpack.prod.js",
     "start": "webpack-dev-server --open --config ./build/webpack.dev.js",
     "pack": "webpack --progress --color"

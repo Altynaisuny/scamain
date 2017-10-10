@@ -1,4 +1,4 @@
-const rent = r => require.ensure([], () => r(require('../pages/rent/rent.vue')), 'rent');
+/*const rent = r => require.ensure([], () => r(require('../pages/rent/rent.vue')), 'rent');
 const error = r => require.ensure([], () => r(require('../pages/error/404.vue')), 'error');
 const login = r => require.ensure([], () => r(require('../pages/login/login.vue')), 'login');
 const rentInfo = r => require.ensure([], () => r(require('../pages/rentInfo/rentInfo.vue')), 'rentInfo');
@@ -14,7 +14,24 @@ const recharge = r => require.ensure([], () => r(require('../pages/transaction/r
 const cashFlow = r => require.ensure([], () => r(require('../pages/transaction/cashFlow.vue')), 'cashFlow');
 const cashFlowAll = r => require.ensure([], () => r(require('../pages/transaction/cashFlowAll.vue')), 'cashFlowAll');
 const modifyPassword = r => require.ensure([], () => r(require('../pages/password/Modify.vue')), 'modifyPassword');
-const user = r => require.ensure([], () => r(require('../pages/user/user.vue')), 'user');
+const user = r => require.ensure([], () => r(require('../pages/user/user.vue')), 'user');*/
+import rent from '../pages/rent/rent.vue'
+import error from '../pages/error/404.vue'
+import login from '../pages/login/login.vue'
+import rentInfo from '../pages/rentInfo/rentInfo.vue'
+import register from '../pages/register/goodsRegister.vue'
+import workBench from '../pages/workBeach.vue'
+import goodsInfo from '../pages/goodsInfo/goodsInfo.vue'
+import charging from '../pages/charging/charging.vue'
+import level from '../pages/level/level.vue'
+import shopManage from '../pages/shopManage/shopManage.vue'
+import userManage from '../pages/userManage/userManage.vue'
+import category from '../pages/register/category.vue'
+import recharge from '../pages/transaction/recharge.vue'
+import cashFlow from '../pages/transaction/cashFlow.vue'
+import cashFlowAll from '../pages/transaction/cashFlowAll.vue'
+import modifyPassword from '../pages/password/Modify.vue'
+import user from '../pages/user/user.vue'
 
 export default [
 	{

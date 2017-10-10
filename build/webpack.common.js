@@ -1,7 +1,5 @@
 const path = require('path');
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
-const CleanWebpackPlugin = require('clean-webpack-plugin');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 function resolve(dir) {
 	return path.resolve(__dirname, dir);
@@ -11,12 +9,12 @@ module.exports = {
 	entry: {
 		app:'./src/main.js',
 	},
-	externals: {
-		'vue': 'Vue',
-		'vue-router': 'VueRouter',
-		'vuex': 'Vuex',
-		'axios': 'axios',
-	},
+	// externals: {
+	// 	'vue': 'Vue',
+	// 	'vue-router': 'VueRouter',
+	// 	'vuex': 'Vuex',
+	// 	'axios': 'axios',
+	// },
 	output: {
 		path: resolve('./dist'),//存放打包后文件的路径
 		publicPath: "/",
@@ -33,14 +31,7 @@ module.exports = {
 		}
 	},
 	plugins: [
-		//清理dist
-		new CleanWebpackPlugin(resolve('./dist')),
-		//自动生成index.html
-		new HtmlWebpackPlugin({
-			hash: true,
-			template: 'src/index.tpl',
-			filename: "index.html"
-		}),
+
 	],
 	module: {
 		rules: [

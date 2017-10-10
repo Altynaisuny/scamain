@@ -1,11 +1,10 @@
 import Vue from 'vue'
-import Vuex from 'vuex'
 import App from './App.vue'
 import VueRouter from 'vue-router'
 import axios from 'axios';
 import routers from './router/router.js'
-// import ElementUI from 'element-ui'
-// import 'element-ui/lib/theme-default/index.css';
+import ElementUI from 'element-ui'
+import 'element-ui/lib/theme-default/index.css';
 import store from './store/index.js'
 import qs from "qs";
 
@@ -23,8 +22,8 @@ const instance = axios.create({
 	headers: {
 		'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
 	},
-	baseURL: 'http://leatest.loverqi.cn',//前端静态资源服务器，使用webpack-dev-server配置代理的时候，注释掉
-	// baseURL: 'http://lease.loverqi.cn',//后端服务器
+	// baseURL: 'http://leatest.loverqi.cn',//前端静态资源服务器，使用webpack-dev-server配置代理的时候，注释掉
+	// baseURL: 'http://lease.loverqi.cn:8080',//后端服务器
 	// proxy: { host: "", port: ,}// 用于设置跨域请求代理
 });
 
@@ -54,10 +53,12 @@ instance.interceptors.request.use(
 Vue.prototype.$http = instance;
 Vue.use(VueRouter);
 
+
 if (process.env.NODE_ENV !== 'production'){
 
 	Vue.use(ElementUI);
-	Vue.use(Vuex);
+	// Vue.use(Vuex);
+
 }
 
 

@@ -2,10 +2,20 @@ const merge = require('webpack-merge');
 const common = require('./webpack.common.js');
 const webpack = require('webpack');
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
-const UglifyJSPlugin = require('uglifyjs-webpack-plugin')
+const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
+const CleanWebpackPlugin = require('clean-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = merge(common, {
 	plugins: [
+		//清理dist
+		new CleanWebpackPlugin(resolve('./dist')),
+		//自动生成index.html
+		new HtmlWebpackPlugin({
+			hash: true,
+			template: 'src/index.tpl',
+			filename: "index.html"
+		}),
 		//浏览器加内核前缀
 		new webpack.LoaderOptionsPlugin({
 			minimize: true

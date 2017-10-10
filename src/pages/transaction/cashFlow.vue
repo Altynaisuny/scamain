@@ -58,10 +58,6 @@
           label="商品名称">
         </el-table-column>
         <el-table-column
-          prop="state"
-          label="订单状态">
-        </el-table-column>
-        <el-table-column
           prop="cardId"
           label="IC卡号码">
         </el-table-column>
@@ -70,7 +66,7 @@
           label="昵称">
         </el-table-column>
         <el-table-column
-          prop="time"
+          prop="createDate"
           label="租赁时间">
         </el-table-column>
         <el-table-column

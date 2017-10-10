@@ -410,8 +410,6 @@
 								type: 'success',
 								message: body.message + "id" + body.data.priceId
 							});
-							//重置
-							this.reset();
 
 						} else {
 							this.$message({
@@ -422,10 +420,13 @@
 					}, (error) => {
 
 					});
+
 				}).catch(() => {
 					this.dialogFormVisible = false;
 					this.$message({type: 'info', message: '已取消操作'});
 				});
+				//重置
+				this.reset();
 			},
 			//第一阶段取消修改
 			cancelEdit() {
